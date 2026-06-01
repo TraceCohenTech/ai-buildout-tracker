@@ -3,24 +3,22 @@
 import { useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, LineChart, Line, AreaChart, Area,
+  ResponsiveContainer, AreaChart, Area,
   Cell, ReferenceLine, PieChart, Pie,
 } from "recharts";
 import {
-  Zap, DollarSign, Briefcase, Building2, AlertTriangle,
-  TrendingUp, Droplets, ChevronDown, ChevronUp,
-  Server, Radio, Cpu, Atom, Leaf, HardDrive,
+  DollarSign, Briefcase, Building2, AlertTriangle,
+  TrendingUp, ChevronDown, ChevronUp,
+  Server, Radio, Cpu, Atom, HardDrive,
 } from "lucide-react";
 import {
   HYPERSCALER_CAPEX_2026, CAPEX_RAMP, TOP_PROJECTS,
   STATES_DATA, MW_BY_STATE, METRO_MARKETS, REGIONAL_PIPELINE,
   JOBS_PER_BILLION, PROJECT_STATUS_BOARD,
-  FISCAL_BENEFIT_RATIOS, ELECTRICITY_PRICE_DATA, DC_ELECTRICITY_SHARE,
-  HOST_COUNTIES, RATEPAYER_STATE_YOY, NUCLEAR_DC_PAIRINGS,
+  FISCAL_BENEFIT_RATIOS, HOST_COUNTIES, NUCLEAR_DC_PAIRINGS,
   GAS_PLANT_BUILDOUTS, TICKER_ITEMS,
   CONSTRUCTION_VS_PERM_JOBS, PERM_JOBS_BY_ROLE, WAGE_VS_LOCAL_MEDIAN,
   JOBS_TIMELINE, LOCAL_HIRING_DATA,
-  RATEPAYER_BURDEN_7STATES, PJM_CAPACITY_AUCTION, RATEPAYER_HOW_IT_WORKS,
   COMMUNITY_STORIES, WORKFORCE_PIPELINE,
 } from "@/lib/data";
 
@@ -188,7 +186,7 @@ export default function Dashboard() {
             <LStat label="Near-Term Pipeline" value="65" sub="Projects — $92.1B breaking ground" icon={Building2} accent="amber" />
             <LStat label="YTD CapEx (Apr 2026)" value="$49.5B" sub="74 projects broke ground in 2026" icon={DollarSign} accent="green" />
             <LStat label="Perm. Jobs (Disclosed)" value="10,000+" sub="$18M–$54M capex per permanent job" icon={Briefcase} accent="blue" />
-            <LStat label="Ratepayer Burden" value="$4.3B" sub="7 states · IL +16% / VA +13% / OH +12%" icon={AlertTriangle} accent="red" />
+            <LStat label="Best Fiscal Ratio" value="26:1" sub="Loudoun Co., VA — $1 of services, $26 in tax. Residential = 0.8:1" icon={TrendingUp} accent="green" />
           </div>
 
           {/* ── Section 1: Capital Deployment ── */}
@@ -332,9 +330,9 @@ export default function Dashboard() {
             <SH n="04 · Power Infrastructure" title="Megawatt Capacity by State & Market"
               sub="MW is the real unit of data center investment. Texas is on track to become the largest US market by committed megawatts — driven by Stargate (1,200MW), Vantage Frontier (1,400MW), and Meta's El Paso and Fort Worth campuses." />
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              <div className="lc-card lc-card-blue p-5 lg:col-span-2">
+              <div className="lc-card lc-card-blue p-5 lg:col-span-2 flex flex-col">
                 <div className="text-xs font-bold text-slate-500 mb-3">Committed MW by State (All Stages)</div>
-                <div className="h-[300px]">
+                <div className="flex-1 min-h-[280px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={[...MW_BY_STATE].sort((a, b) => b.mw - a.mw)} layout="vertical" margin={{ left: 8, right: 60, top: 5, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
@@ -423,9 +421,9 @@ export default function Dashboard() {
             <SH n="05 · State Rankings" title="State Leaderboard"
               sub="Virginia leads in operational facility count and economic maturity. Texas leads in planned MW. Arizona has the highest documented GDP return ($25B) from a smaller base." />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <div className="lc-card lc-card-amber p-5">
+              <div className="lc-card lc-card-amber p-5 flex flex-col">
                 <div className="text-xs font-bold text-slate-500 mb-3">Operational Facilities (Top 10 States)</div>
-                <div className="h-[280px]">
+                <div className="flex-1 min-h-[240px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={[...STATES_DATA].filter(s => s.operational > 0).sort((a, b) => b.operational - a.operational).slice(0, 10)}
@@ -577,10 +575,10 @@ export default function Dashboard() {
 
             {/* Row 3: Wage premium + job timeline */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-              <div className="lc-card lc-card-green p-5">
+              <div className="lc-card lc-card-green p-5 flex flex-col">
                 <div className="text-xs font-bold text-slate-500 mb-1">DC Wages vs. Local Median Annual Income ($K)</div>
                 <p className="text-xs text-slate-400 mb-3">Data center jobs pay well above county medians — especially in economically distressed host counties where alternatives are limited.</p>
-                <div className="h-[220px]">
+                <div className="flex-1 min-h-[200px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={WAGE_VS_LOCAL_MEDIAN} layout="vertical" margin={{ left: 8, right: 55, top: 5, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
@@ -670,181 +668,6 @@ export default function Dashboard() {
                 <EvidenceChip title="Project Steamboat, GA" val="1,666×" sub="$12K/yr idle parcel → $200M over 10 years in property tax" color="#8b5cf6" />
                 <EvidenceChip title="Maryland SAGE Study" val="$775M" sub="Local economic activity during construction of one 800K sqft DC" color="#22c55e" />
                 <EvidenceChip title="Stargate Michigan" val="2,500 Union" sub="First Stargate with explicit union-built commitment. IBEW + operating engineers." color="#f59e0b" />
-              </div>
-            </div>
-          </section>
-
-          {/* ── Section 7: Ratepayer Burden ── */}
-          <section>
-            <SH n="07 · Ratepayer Burden" title="Who Actually Pays for the Grid Upgrade"
-              sub={'$4.3B in residential electricity costs across 7 states are directly attributable to data center load growth — a subsidy that never appears in any economic impact report. IL +16%, VA +13%, OH +12% YoY. The mechanism is structural, not accidental. (Source: Union of Concerned Scientists, 2024)'} />
-
-            {/* How it works — 5-step flow */}
-            <div className="lc-card p-5 mb-5">
-              <div className="text-xs font-bold text-slate-500 mb-4">How the Cost-Shift Works — Step by Step</div>
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                {RATEPAYER_HOW_IT_WORKS.map((s, i) => (
-                  <div key={s.n} className="relative">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-6 h-6 rounded-full bg-red-100 border-2 border-red-300 flex items-center justify-center shrink-0">
-                        <span className="text-xs font-black text-red-700">{s.n}</span>
-                      </div>
-                      {i < 4 && <div className="hidden sm:block flex-1 h-0.5 bg-red-100" />}
-                    </div>
-                    <div className="text-xs font-bold text-slate-800 mb-1 leading-tight">{s.title}</div>
-                    <div className="text-xs text-slate-500 leading-snug">{s.body}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Charts row */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
-              {/* PJM auction */}
-              <div className="lc-card lc-card-red p-5">
-                <div className="text-xs font-bold text-slate-500 mb-1">PJM Capacity Auction Price ($B)</div>
-                <p className="text-xs text-slate-400 mb-3">PJM operates the grid for 13 states + DC. When data center load surges, the capacity auction clears at a higher price — and every household in the region pays more.</p>
-                <div className="h-[180px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={PJM_CAPACITY_AUCTION} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                      <XAxis dataKey="year" tick={{ fontSize: 10, fill: "#94a3b8" }} />
-                      <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} tickFormatter={(v) => `$${v}B`} />
-                      <Tooltip content={<ChartTip fmt={(v) => `$${v}B capacity cost`} />} />
-                      <Bar dataKey="priceB" name="PJM Auction" radius={[4, 4, 0, 0]}>
-                        {PJM_CAPACITY_AUCTION.map((e, i) => <Cell key={i} fill={e.color} />)}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-3 bg-red-50 border border-red-100 rounded-lg p-2.5 flex items-center justify-between">
-                  <span className="text-xs text-red-700 font-semibold">2022/23 → 2024/25</span>
-                  <span className="mono text-lg font-black text-red-600">+568%</span>
-                </div>
-              </div>
-
-              {/* YoY by state */}
-              <div className="lc-card lc-card-red p-5">
-                <div className="text-xs font-bold text-slate-500 mb-1">Residential Bill Increase YoY — DC-Heavy States</div>
-                <p className="text-xs text-slate-400 mb-3">US average is 6% YoY. States with heavy data center load are running 2–3× that pace.</p>
-                <div className="h-[180px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={RATEPAYER_STATE_YOY} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                      <XAxis dataKey="state" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}%`} />
-                      <Tooltip content={<ChartTip fmt={(v) => `+${v}% YoY`} />} />
-                      <Bar dataKey="pct" name="YoY Increase" radius={[4, 4, 0, 0]}>
-                        {RATEPAYER_STATE_YOY.map((e, i) => <Cell key={i} fill={e.state === "US Avg" ? "#cbd5e1" : "#ef4444"} />)}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-3 space-y-1.5">
-                  {[
-                    { l: "OH household monthly increase by 2028", v: "+$70/mo" },
-                    { l: "Virginia 5-yr cumulative increase", v: "+267%" },
-                  ].map((x) => (
-                    <div key={x.l} className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">{x.l}</span>
-                      <span className="mono text-sm font-black text-red-600">{x.v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Electricity price trend */}
-              <div className="lc-card lc-card-red p-5">
-                <div className="text-xs font-bold text-slate-500 mb-3">US Avg Residential Electricity Price (¢/kWh)</div>
-                <div className="h-[220px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={ELECTRICITY_PRICE_DATA} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}¢`} domain={[10, 30]} />
-                      <Tooltip content={<ChartTip fmt={(v) => `${v}¢ per kWh`} />} />
-                      <Line type="monotone" dataKey="cents" name="Price" stroke="#ef4444" strokeWidth={2.5} dot={{ fill: "#ef4444", r: 4, strokeWidth: 0 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-
-            {/* 7-state burden table */}
-            <div className="lc-card overflow-hidden mb-5">
-              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                <div className="text-xs font-bold text-slate-500 uppercase tracking-wide">$4.3B Burden — State-by-State Breakdown</div>
-                <div className="mono text-xs text-red-600 font-bold">Source: Union of Concerned Scientists, 2024</div>
-              </div>
-              <div className="overflow-x-auto scrollbar-thin">
-                <table className="lt-table min-w-[680px]">
-                  <thead>
-                    <tr>
-                      <th className="text-left">State</th>
-                      <th className="text-right">Burden ($M)</th>
-                      <th className="text-right">Bill Increase YoY</th>
-                      <th className="text-center">Regulated?</th>
-                      <th className="text-left">Mechanism</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {RATEPAYER_BURDEN_7STATES.map((r, i) => (
-                      <tr key={i}>
-                        <td className="font-bold text-slate-900">{r.state} <span className="text-slate-400 font-normal mono text-xs">({r.code})</span></td>
-                        <td className="text-right mono font-black text-red-600">${r.burdenM.toLocaleString()}M</td>
-                        <td className="text-right mono font-bold" style={{ color: r.yoyPct >= 12 ? "#ef4444" : r.yoyPct >= 8 ? "#f59e0b" : "#64748b" }}>+{r.yoyPct}%</td>
-                        <td className="text-center">
-                          <span className={`text-xs font-bold px-2 py-0.5 rounded mono ${r.regulated ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                            {r.regulated ? "Yes" : "No"}
-                          </span>
-                        </td>
-                        <td className="text-slate-500" style={{ fontSize: 11, maxWidth: 300 }}>{r.note}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className="bg-red-50 border-t border-red-100 px-5 py-3 flex items-center justify-between">
-                <span className="text-xs text-red-700 font-semibold">Total residential ratepayer burden (7 states)</span>
-                <span className="mono text-xl font-black text-red-600">$4.3B</span>
-              </div>
-            </div>
-
-            {/* Grid stress metrics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <div className="lc-card lc-card-blue p-5">
-                <div className="text-xs font-bold text-slate-500 mb-3">DC Share of US Electricity Consumption</div>
-                <div className="h-[180px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={DC_ELECTRICITY_SHARE} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
-                      <defs>
-                        <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.02} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}%`} />
-                      <Tooltip content={<ChartTip fmt={(v) => `${v}% of US electricity`} />} />
-                      <Area type="monotone" dataKey="share" name="DC Share" stroke="#3b82f6" fill="url(#eg)" strokeWidth={2.5} dot={{ fill: "#3b82f6", r: 4, strokeWidth: 0 }} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3 content-start">
-                {[
-                  { l: "Share of US Load Growth by 2030", v: "60%", c: "#3b82f6", icon: Zap },
-                  { l: "1GW Facility = Household Equivalent", v: "800K homes", c: "#f59e0b", icon: Building2 },
-                  { l: "DC Daily Water Consumption (2021)", v: "449M gal", c: "#06b6d4", icon: Droplets },
-                  { l: "Farmland Converted to DCs (AFBF)", v: "4,925 sites", c: "#ef4444", icon: Leaf },
-                ].map((x) => (
-                  <div key={x.l} className="lc-card p-4 hover:shadow-md transition-shadow" style={{ borderTop: `3px solid ${x.c}` }}>
-                    <x.icon size={15} style={{ color: x.c }} className="mb-2" />
-                    <div className="mono text-xl font-black" style={{ color: x.c }}>{x.v}</div>
-                    <div className="text-xs text-slate-500 mt-1 leading-tight">{x.l}</div>
-                  </div>
-                ))}
               </div>
             </div>
           </section>
