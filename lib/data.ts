@@ -42,6 +42,7 @@ export const TOP_PROJECTS = [
   { company: "Microsoft", project: "Mount Pleasant Campus", location: "Mt. Pleasant, WI", state: "WI", status: "Construction", capex: "$7B", constructionJobs: "2,000+", permJobs: "800+", mw: null, tenYrImpact: null },
   { company: "NTT", project: "US Expansion Program", location: "Chicago/Dallas/Phoenix", state: "Multi", status: "Mixed", capex: "$10B", constructionJobs: "TBD", permJobs: "TBD", mw: 130, tenYrImpact: null },
   { company: "Microsoft", project: "Project Steamboat", location: "Fulton County, GA", state: "GA", status: "Approved", capex: "$1.84B", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: 2884919877 },
+  { company: "OpenAI / Oracle / Related Digital", project: "Stargate Michigan", location: "Saline Township, Washtenaw Co.", state: "MI", status: "Construction", capex: "$45B+", constructionJobs: "2,500 (union)", permJobs: "450+", mw: 1000, tenYrImpact: null },
 ];
 
 export const STATES_DATA = [
@@ -127,6 +128,7 @@ export const PROJECT_STATUS_BOARD = [
   { name: "QTS Dane County", operator: "QTS", state: "WI", mw: 750, status: "PLANNED", statusColor: "#94a3b8", capex: "$12B" },
   { name: "Stargate Wisconsin", operator: "OpenAI/Oracle", state: "WI", mw: null, status: "ANNOUNCED", statusColor: "#475569", capex: "TBD" },
   { name: "Crusoe-Tallgrass WY", operator: "Crusoe", state: "WY", mw: 1800, status: "PLANNED", statusColor: "#94a3b8", capex: "TBD" },
+  { name: "Stargate Michigan", operator: "OpenAI/Oracle", state: "MI", mw: 1000, status: "BUILDING", statusColor: "#f59e0b", capex: "$45B+" },
 ];
 
 export const FISCAL_BENEFIT_RATIOS = [
@@ -254,6 +256,81 @@ export const WORKFORCE_BENCHMARKS = {
   },
 };
 
+/* ─── Jobs Deep Dive ─── */
+
+export const CONSTRUCTION_VS_PERM_JOBS = [
+  { project: "Meta Hyperion (LA)", construction: 5000, permanent: 500 },
+  { project: "Stargate Abilene (TX)", construction: 6000, permanent: 357 },
+  { project: "Stargate Michigan", construction: 2500, permanent: 450 },
+  { project: "Vantage Frontier (TX)", construction: 5000, permanent: 0 },
+  { project: "QTS Dane County (WI)", construction: 5000, permanent: 0 },
+  { project: "Vantage Lighthouse (WI)", construction: 4000, permanent: 1000 },
+  { project: "Meta El Paso (TX)", construction: 4000, permanent: 300 },
+  { project: "Microsoft Fairwater (GA)", construction: 1324, permanent: 635 },
+  { project: "CoreWeave Lancaster (PA)", construction: 600, permanent: 175 },
+];
+
+export const PERM_JOBS_BY_ROLE = [
+  { role: "Facilities / DC Ops", pct: 38, color: "#f59e0b" },
+  { role: "Security", pct: 25, color: "#3b82f6" },
+  { role: "IT / Networking", pct: 22, color: "#22c55e" },
+  { role: "Management / Admin", pct: 15, color: "#8b5cf6" },
+];
+
+export const WAGE_VS_LOCAL_MEDIAN = [
+  { county: "Richland Parish LA", dcWage: 80, localMedian: 42, pct: 89 },
+  { county: "Saline Twp MI", dcWage: 95, localMedian: 68, pct: 40 },
+  { county: "Taylor County TX", dcWage: 75, localMedian: 52, pct: 44 },
+  { county: "Warren County MS", dcWage: 72, localMedian: 38, pct: 89 },
+  { county: "St. Joseph Co. IN", dcWage: 78, localMedian: 51, pct: 53 },
+  { county: "Ozaukee Co. WI", dcWage: 90, localMedian: 68, pct: 32 },
+];
+
+export const JOBS_TIMELINE = [
+  { phase: "Pre-construction (site prep)", months: "0–6", workers: 200, type: "Local trades" },
+  { phase: "Construction peak", months: "6–24", workers: 5000, type: "Regional union + trades" },
+  { phase: "Construction wind-down", months: "24–36", workers: 1200, type: "Finishing trades" },
+  { phase: "Commissioning", months: "30–42", workers: 400, type: "Specialist technicians" },
+  { phase: "Operations (permanent)", months: "36+", workers: 300, type: "Full-time employees" },
+  { phase: "Induced / indirect", months: "36+", workers: 1050, type: "Local economy (3.5× multiplier)" },
+];
+
+export const LOCAL_HIRING_DATA = [
+  { project: "Stargate Michigan", commitment: "100% union labor", detail: "First Stargate campus with explicit union-built commitment. IBEW + operating engineers.", verified: true },
+  { project: "AWS Mississippi", commitment: "Special legislation", detail: "AWS covers all power infrastructure costs; local workforce pipeline with community colleges.", verified: true },
+  { project: "Vantage Lighthouse WI", commitment: "4,000+ construction", detail: "Partnered with Waukesha County Technical College for local trades training pipeline.", verified: true },
+  { project: "Meta Hyperion LA", commitment: "Community benefit", detail: "$300M direct infrastructure funding; local hiring preference in CBA negotiations.", verified: true },
+  { project: "Stargate Abilene TX", commitment: "6,000 construction", detail: "Pulling trades from 300-mile radius; $140K avg annual comp for construction workers.", verified: true },
+  { project: "QTS Dane County WI", commitment: "5,000 construction", detail: "Partnership with MATC for apprenticeship pipeline. Local hiring goal: 30% of construction workforce.", verified: false },
+];
+
+/* ─── Ratepayer Burden ─── */
+
+export const RATEPAYER_BURDEN_7STATES = [
+  { state: "Virginia", code: "VA", burdenM: 1200, yoyPct: 13, regulated: true, note: "GS5 rate class now requires DCs to pay 60–85% of full cost. Pre-reform: ~40% subsidy." },
+  { state: "Illinois", code: "IL", burdenM: 950, yoyPct: 16, regulated: false, note: "No DC-specific rate class. PJM capacity cost surge passes directly to residential accounts." },
+  { state: "Ohio", code: "OH", burdenM: 820, yoyPct: 12, regulated: true, note: "85% min-pay rule approved. Households projected +$70/mo by 2028 from PJM charges alone." },
+  { state: "Pennsylvania", code: "PA", burdenM: 580, yoyPct: 9, regulated: false, note: "Grid upgrade costs for DC interconnection socialized across full rate base." },
+  { state: "Maryland", code: "MD", burdenM: 380, yoyPct: 8, regulated: false, note: "Transmission cost allocation from DC-metro growth clusters." },
+  { state: "New Jersey", code: "NJ", burdenM: 240, yoyPct: 7, regulated: false, note: "Shares PJM capacity pool with DC-heavy neighbors despite fewer local facilities." },
+  { state: "West Virginia", code: "WV", burdenM: 130, yoyPct: 5, regulated: false, note: "Grid reinforcement costs shared for transmission serving VA and OH DC loads." },
+];
+
+export const PJM_CAPACITY_AUCTION = [
+  { year: "2022/23", priceB: 2.2, color: "#22c55e" },
+  { year: "2023/24", priceB: 3.1, color: "#f59e0b" },
+  { year: "2024/25", priceB: 14.7, color: "#ef4444" },
+  { year: "2025/26E", priceB: 20.0, color: "#ef4444" },
+];
+
+export const RATEPAYER_HOW_IT_WORKS = [
+  { n: "01", title: "DCs get below-market rates", body: "States offer economic development rate classes — often 30–40% below residential. The deal is designed to attract investment." },
+  { n: "02", title: "Fixed grid costs don't shrink", body: "Transmission lines, substations, and peaker plants cost the same regardless of who uses them. Someone pays for them." },
+  { n: "03", title: "Revenue shortfall spread to households", body: "The gap between what DCs pay and full cost is reallocated to residential and small-commercial accounts each billing cycle." },
+  { n: "04", title: "PJM auction compounds it", body: "When DC load pushes grid operators to procure more capacity, the auction clears at a higher price — $14.7B in 2024/25, up 568%. Every ratepayer in the region absorbs it." },
+  { n: "05", title: "Result: IL +16%, VA +13%, OH +12% YoY", body: "Households in DC-heavy states pay significantly more than the 6% US average increase — while data centers often pay 3–5× less per MWh than residential customers." },
+];
+
 export const TICKER_ITEMS = [
   "LIVE: Stargate Abilene — 200MW operational, 1,000MW under construction in Abilene, TX",
   "PJM capacity auction: $2.2B → $14.7B (+568% YoY) — residential bills absorbing the shock",
@@ -270,4 +347,6 @@ export const TICKER_ITEMS = [
   "Microsoft restarted Three Mile Island nuclear plant under 20-year PPA for Azure data centers",
   "AFBF: 4,925 active/under-construction data centers — most converted farmland won't return to ag",
   "Construction workers: $140K avg annual comp, $70/hr — pulling workforce from 300-mile radius",
+  "Stargate Michigan: $45B+ / 1GW / 2,500 union construction jobs / 450+ permanent — Saline Township, Washtenaw County",
+  "Stargate Michigan: first union-built Stargate campus — IBEW + operating engineers; delivery end 2027",
 ];

@@ -18,6 +18,9 @@ import {
   FISCAL_BENEFIT_RATIOS, ELECTRICITY_PRICE_DATA, DC_ELECTRICITY_SHARE,
   HOST_COUNTIES, RATEPAYER_STATE_YOY, NUCLEAR_DC_PAIRINGS,
   GAS_PLANT_BUILDOUTS, TICKER_ITEMS,
+  CONSTRUCTION_VS_PERM_JOBS, PERM_JOBS_BY_ROLE, WAGE_VS_LOCAL_MEDIAN,
+  JOBS_TIMELINE, LOCAL_HIRING_DATA,
+  RATEPAYER_BURDEN_7STATES, PJM_CAPACITY_AUCTION, RATEPAYER_HOW_IT_WORKS,
 } from "@/lib/data";
 
 /* ─── Shared tooltip ─── */
@@ -483,45 +486,167 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* ── Section 6: The Jobs Math ── */}
+          {/* ── Section 6: Jobs Deep Dive ── */}
           <section>
-            <SH n="06 · Economic Analysis" title="The Jobs Math & Fiscal Returns"
-              sub="Data centers create the fewest permanent jobs per dollar invested of any major US industry — but generate the highest fiscal returns per acre of any land use. Both facts are true simultaneously." />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <div className="lc-card lc-card-red p-5">
-                <div className="text-xs font-bold text-slate-500 mb-1">Permanent Jobs per $1B Invested — Industry Comparison</div>
-                <p className="text-xs text-slate-400 mb-4">An auto plant creates 34× more permanent jobs per billion dollars invested than a data center. The employment bet is almost entirely on the construction phase.</p>
-                <div className="h-[240px]">
+            <SH n="06 · Jobs Deep Dive" title="Who Gets Hired, For How Long, and What They're Paid"
+              sub="The construction boom is real and well-compensated — but temporary. Permanent staffing is thin relative to capex. The communities that win are those that secured training pipelines, union agreements, and local hiring commitments before groundbreaking." />
+
+            {/* Row 1: headline benchmarks */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
+              {[
+                { label: "Construction workers per 100MW", val: "850", sub: "Hamm Institute 2025", color: "#f59e0b" },
+                { label: "Avg construction compensation", val: "$140K/yr", sub: "$70/hr including benefits", color: "#f59e0b" },
+                { label: "Typical build duration", val: "18–36 mo", sub: "Per phase, per building", color: "#475569" },
+                { label: "Cumul. construction jobs through 2030", val: "4.7M", sub: "All planned US projects", color: "#22c55e" },
+                { label: "Permanent ops jobs by 2030", val: "697K", sub: "Projected industry-wide", color: "#3b82f6" },
+                { label: "Perm. jobs per $1B invested", val: "28", sub: "vs 950 for an auto plant (34×)", color: "#ef4444" },
+              ].map((x) => (
+                <div key={x.label} className="lc-card p-3 sm:p-4 text-center hover:shadow-md transition-shadow" style={{ borderTop: `3px solid ${x.color}` }}>
+                  <div className="mono text-xl sm:text-2xl font-black" style={{ color: x.color }}>{x.val}</div>
+                  <div className="text-xs font-semibold text-slate-700 mt-1.5 leading-tight">{x.label}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{x.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Row 2: Construction vs Perm + Role breakdown */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+              <div className="lc-card lc-card-amber p-5">
+                <div className="text-xs font-bold text-slate-500 mb-1">Construction vs. Permanent Jobs by Project</div>
+                <p className="text-xs text-slate-400 mb-3">The gap between the construction peak and permanent headcount is the defining feature of this investment class. Stargate Abilene: 6,000 build → 357 stay.</p>
+                <div className="h-[280px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={JOBS_PER_BILLION} layout="vertical" margin={{ left: 8, right: 60, top: 5, bottom: 5 }}>
+                    <BarChart data={CONSTRUCTION_VS_PERM_JOBS} layout="vertical" margin={{ left: 8, right: 60, top: 5, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                      <XAxis type="number" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                      <YAxis type="category" dataKey="industry" width={120} tick={{ fontSize: 10, fill: "#475569" }} />
-                      <Tooltip content={<ChartTip fmt={(v) => `${v} jobs per $1B`} />} />
-                      <Bar dataKey="jobs" name="Jobs per $1B" radius={[0, 4, 4, 0]}>
-                        {JOBS_PER_BILLION.map((e, i) => <Cell key={i} fill={e.color} />)}
-                      </Bar>
+                      <XAxis type="number" tick={{ fontSize: 10, fill: "#94a3b8" }} />
+                      <YAxis type="category" dataKey="project" width={160} tick={{ fontSize: 9, fill: "#475569" }} />
+                      <Tooltip content={<ChartTip fmt={(v, n) => `${Number(v).toLocaleString()} ${n === "construction" ? "construction" : "permanent"} jobs`} />} />
+                      <Bar dataKey="construction" name="construction" fill="#f59e0b" radius={[0, 3, 3, 0]} />
+                      <Bar dataKey="permanent" name="permanent" fill="#22c55e" radius={[0, 3, 3, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-4 grid grid-cols-3 gap-2">
-                  {[
-                    { l: "Data Centers", v: "28 jobs/$B", c: "#ef4444" },
-                    { l: "Auto Plant", v: "950 jobs/$B", c: "#f59e0b" },
-                    { l: "Multiplier", v: "34×", c: "#334155" },
-                  ].map((x) => (
-                    <div key={x.l} className="bg-slate-50 rounded-lg p-3 text-center">
-                      <div className="mono font-black text-lg" style={{ color: x.c }}>{x.v}</div>
-                      <div className="text-xs text-slate-400 mt-0.5">{x.l}</div>
-                    </div>
-                  ))}
+                <div className="flex gap-4 mt-2">
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-amber-400" /><span className="text-xs text-slate-500">Construction (peak)</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-green-500" /><span className="text-xs text-slate-500">Permanent</span></div>
                 </div>
               </div>
 
+              <div className="space-y-4">
+                {/* Permanent jobs by role */}
+                <div className="lc-card lc-card-blue p-5">
+                  <div className="text-xs font-bold text-slate-500 mb-3">Permanent Job Mix — By Role Category</div>
+                  <div className="space-y-2">
+                    {PERM_JOBS_BY_ROLE.map((r) => (
+                      <div key={r.role}>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-xs font-semibold text-slate-700">{r.role}</span>
+                          <span className="mono text-xs font-bold text-slate-900">{r.pct}%</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${r.pct}%`, background: r.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 bg-blue-50 border border-blue-100 rounded-lg p-3">
+                    <div className="text-xs text-blue-800 leading-snug">The largest permanent role category is facilities/ops — requiring technical training but not a 4-year degree. This is the realistic pathway for local workforce investment.</div>
+                  </div>
+                </div>
+
+                {/* Industry comparison */}
+                <div className="lc-card lc-card-red p-5">
+                  <div className="text-xs font-bold text-slate-500 mb-3">Permanent Jobs per $1B — Industry Comparison</div>
+                  <div className="h-[140px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={JOBS_PER_BILLION} layout="vertical" margin={{ left: 8, right: 55, top: 5, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                        <XAxis type="number" tick={{ fontSize: 10, fill: "#94a3b8" }} />
+                        <YAxis type="category" dataKey="industry" width={115} tick={{ fontSize: 9, fill: "#475569" }} />
+                        <Tooltip content={<ChartTip fmt={(v) => `${v} jobs per $1B`} />} />
+                        <Bar dataKey="jobs" name="Jobs per $1B" radius={[0, 3, 3, 0]}>
+                          {JOBS_PER_BILLION.map((e, i) => <Cell key={i} fill={e.color} />)}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Wage premium + job timeline */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+              <div className="lc-card lc-card-green p-5">
+                <div className="text-xs font-bold text-slate-500 mb-1">DC Wages vs. Local Median Annual Income ($K)</div>
+                <p className="text-xs text-slate-400 mb-3">Data center jobs pay well above county medians — especially in economically distressed host counties where alternatives are limited.</p>
+                <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={WAGE_VS_LOCAL_MEDIAN} layout="vertical" margin={{ left: 8, right: 55, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                      <XAxis type="number" tick={{ fontSize: 10, fill: "#94a3b8" }} tickFormatter={(v) => `$${v}K`} />
+                      <YAxis type="category" dataKey="county" width={115} tick={{ fontSize: 9, fill: "#475569" }} />
+                      <Tooltip content={<ChartTip fmt={(v, n) => `$${v}K — ${n === "dcWage" ? "DC job" : "local median"}`} />} />
+                      <Bar dataKey="localMedian" name="localMedian" fill="#e2e8f0" radius={[0, 2, 2, 0]} />
+                      <Bar dataKey="dcWage" name="dcWage" fill="#22c55e" radius={[0, 3, 3, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex gap-4 mt-2">
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-green-500" /><span className="text-xs text-slate-500">DC job wage</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-sm bg-slate-200" /><span className="text-xs text-slate-500">Local median income</span></div>
+                </div>
+              </div>
+
+              {/* Job lifecycle */}
+              <div className="lc-card lc-card-amber p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">Typical Employment Lifecycle — 1GW Campus</div>
+                <div className="space-y-2">
+                  {JOBS_TIMELINE.map((t) => (
+                    <div key={t.phase} className="flex items-start gap-3 py-2 border-b border-slate-100 last:border-0">
+                      <div className="shrink-0 text-right" style={{ minWidth: 60 }}>
+                        <div className="mono text-xs font-bold text-slate-400">{t.months}</div>
+                        <div className="mono text-base font-black text-amber-600">{t.workers.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-800">{t.phase}</div>
+                        <div className="text-xs text-slate-400 mt-0.5">{t.type}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 bg-amber-50 border border-amber-100 rounded-lg p-2.5">
+                  <div className="text-xs text-amber-800">Construction workers are pulled from a <strong>300-mile radius</strong>. Many are transient — local hotels, restaurants, and services capture the spending, but permanent population growth is limited.</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Row 4: Local hiring commitments */}
+            <div className="lc-card p-5">
+              <div className="text-xs font-bold text-slate-500 mb-3">Local Hiring Commitments & Community Agreements</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {LOCAL_HIRING_DATA.map((d) => (
+                  <div key={d.project} className="bg-slate-50 rounded-xl p-3 border border-slate-100">
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${d.verified ? "bg-green-500" : "bg-amber-400"}`} />
+                      <div className="text-xs font-bold text-slate-800 leading-tight">{d.project}</div>
+                    </div>
+                    <div className="text-xs font-semibold text-amber-700 mb-1">{d.commitment}</div>
+                    <div className="text-xs text-slate-500 leading-snug">{d.detail}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-3 mt-3 pt-3 border-t border-slate-100">
+                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-green-500" /><span className="text-xs text-slate-500">Formally verified / committed in filing</span></div>
+                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-400" /><span className="text-xs text-slate-500">Announced but not legally binding</span></div>
+              </div>
+            </div>
+
+            {/* Row 5: Fiscal returns */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-5">
               <div className="lc-card lc-card-green p-5">
                 <div className="text-xs font-bold text-slate-500 mb-1">Fiscal Benefit Ratio — Tax Revenue vs. Services Consumed</div>
-                <p className="text-xs text-slate-400 mb-4">Dollars of property tax generated for every dollar of public services (schools, roads, emergency) consumed. Break-even = 1:1. Residential housing actually loses money for local governments at 0.8:1.</p>
-                <div className="h-[240px]">
+                <p className="text-xs text-slate-400 mb-4">Dollars of property tax per dollar of public services (schools, roads, emergency response). Residential housing loses money at 0.8:1. A data center at 26:1 funds the whole county.</p>
+                <div className="h-[220px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={FISCAL_BENEFIT_RATIOS} layout="vertical" margin={{ left: 8, right: 55, top: 5, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
@@ -536,46 +661,159 @@ export default function Dashboard() {
                   </ResponsiveContainer>
                 </div>
               </div>
-            </div>
 
-            {/* Evidence chips */}
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <EvidenceChip title="Virginia Statewide" val="74,000 Jobs" sub="$9.1B GDP · $1.64B local taxes/yr · 1:3.5 employment multiplier" color="#22c55e" />
-              <EvidenceChip title="Arizona" val="$25B GDP" sub="$863M combined annual tax revenue from data centers (2023)" color="#f59e0b" />
-              <EvidenceChip title="Brookings 2026 (Peer-Reviewed)" val="+22% Info Sector" sub="+4–5% private employment in host counties vs 3,000 control counties" color="#3b82f6" />
-              <EvidenceChip title="Project Steamboat, GA" val="1,666×" sub="$12K/yr idle parcel → $200M over 10 years in property tax" color="#8b5cf6" />
-            </div>
-
-            {/* Workforce benchmarks */}
-            <div className="mt-5 lc-card lc-card-amber p-5">
-              <div className="text-xs font-bold text-slate-500 mb-4">Construction Workforce Math — The Real Employment Story</div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                {[
-                  { label: "Workers per 100MW (Construction)", val: "850", sub: "Hamm Institute 2025", color: "#f59e0b" },
-                  { label: "Avg Annual Construction Comp", val: "$140K", sub: "$70/hr including benefits", color: "#f59e0b" },
-                  { label: "Typical Build Duration", val: "18–36mo", sub: "Per phase, per building", color: "#475569" },
-                  { label: "Cumulative Construction Jobs Through 2030", val: "4.7M", sub: "Across all planned projects", color: "#22c55e" },
-                  { label: "Perm. Operations Jobs by 2030", val: "697K", sub: "Projected industry-wide", color: "#3b82f6" },
-                  { label: "Maryland SAGE: 800K sqft DC", val: "$775M", sub: "Local economic activity during construction phase alone", color: "#8b5cf6" },
-                ].map((x) => (
-                  <div key={x.label} className="text-center">
-                    <div className="mono text-xl sm:text-2xl font-black" style={{ color: x.color }}>{x.val}</div>
-                    <div className="text-xs font-semibold text-slate-700 mt-1 leading-tight">{x.label}</div>
-                    <div className="text-xs text-slate-400 mt-0.5">{x.sub}</div>
-                  </div>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
+                <EvidenceChip title="Virginia Statewide" val="74,000 Jobs" sub="$9.1B GDP · $1.64B local taxes/yr · 1:3.5 employment multiplier" color="#22c55e" />
+                <EvidenceChip title="Arizona" val="$25B GDP" sub="$863M combined annual tax revenue from data centers (2023)" color="#f59e0b" />
+                <EvidenceChip title="Brookings 2026 (Peer-Reviewed)" val="+22% Info Sector" sub="+4–5% private employment in host counties vs 3,000 control counties" color="#3b82f6" />
+                <EvidenceChip title="Project Steamboat, GA" val="1,666×" sub="$12K/yr idle parcel → $200M over 10 years in property tax" color="#8b5cf6" />
+                <EvidenceChip title="Maryland SAGE Study" val="$775M" sub="Local economic activity during construction of one 800K sqft DC" color="#22c55e" />
+                <EvidenceChip title="Stargate Michigan" val="2,500 Union" sub="First Stargate with explicit union-built commitment. IBEW + operating engineers." color="#f59e0b" />
               </div>
             </div>
           </section>
 
-          {/* ── Section 7: Energy & Grid ── */}
+          {/* ── Section 7: Ratepayer Burden ── */}
           <section>
-            <SH n="07 · Grid Stress" title="Energy Demand & Power Costs"
-              sub="Data centers are responsible for 60% of all US electrical load growth through 2030. A single 1GW facility draws the equivalent of 800,000 homes. The grid — and residential ratepayers — were not designed for this pace." />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              <div className="lc-card lc-card-blue p-5">
-                <div className="text-xs font-bold text-slate-500 mb-3">DC Share of US Electricity</div>
+            <SH n="07 · Ratepayer Burden" title="Who Actually Pays for the Grid Upgrade"
+              sub={'$4.3B in residential electricity costs across 7 states are directly attributable to data center load growth — a subsidy that never appears in any economic impact report. IL +16%, VA +13%, OH +12% YoY. The mechanism is structural, not accidental. (Source: Union of Concerned Scientists, 2024)'} />
+
+            {/* How it works — 5-step flow */}
+            <div className="lc-card p-5 mb-5">
+              <div className="text-xs font-bold text-slate-500 mb-4">How the Cost-Shift Works — Step by Step</div>
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                {RATEPAYER_HOW_IT_WORKS.map((s, i) => (
+                  <div key={s.n} className="relative">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-6 h-6 rounded-full bg-red-100 border-2 border-red-300 flex items-center justify-center shrink-0">
+                        <span className="text-xs font-black text-red-700">{s.n}</span>
+                      </div>
+                      {i < 4 && <div className="hidden sm:block flex-1 h-0.5 bg-red-100" />}
+                    </div>
+                    <div className="text-xs font-bold text-slate-800 mb-1 leading-tight">{s.title}</div>
+                    <div className="text-xs text-slate-500 leading-snug">{s.body}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Charts row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
+              {/* PJM auction */}
+              <div className="lc-card lc-card-red p-5">
+                <div className="text-xs font-bold text-slate-500 mb-1">PJM Capacity Auction Price ($B)</div>
+                <p className="text-xs text-slate-400 mb-3">PJM operates the grid for 13 states + DC. When data center load surges, the capacity auction clears at a higher price — and every household in the region pays more.</p>
+                <div className="h-[180px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={PJM_CAPACITY_AUCTION} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                      <XAxis dataKey="year" tick={{ fontSize: 10, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} tickFormatter={(v) => `$${v}B`} />
+                      <Tooltip content={<ChartTip fmt={(v) => `$${v}B capacity cost`} />} />
+                      <Bar dataKey="priceB" name="PJM Auction" radius={[4, 4, 0, 0]}>
+                        {PJM_CAPACITY_AUCTION.map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-3 bg-red-50 border border-red-100 rounded-lg p-2.5 flex items-center justify-between">
+                  <span className="text-xs text-red-700 font-semibold">2022/23 → 2024/25</span>
+                  <span className="mono text-lg font-black text-red-600">+568%</span>
+                </div>
+              </div>
+
+              {/* YoY by state */}
+              <div className="lc-card lc-card-red p-5">
+                <div className="text-xs font-bold text-slate-500 mb-1">Residential Bill Increase YoY — DC-Heavy States</div>
+                <p className="text-xs text-slate-400 mb-3">US average is 6% YoY. States with heavy data center load are running 2–3× that pace.</p>
+                <div className="h-[180px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={RATEPAYER_STATE_YOY} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                      <XAxis dataKey="state" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}%`} />
+                      <Tooltip content={<ChartTip fmt={(v) => `+${v}% YoY`} />} />
+                      <Bar dataKey="pct" name="YoY Increase" radius={[4, 4, 0, 0]}>
+                        {RATEPAYER_STATE_YOY.map((e, i) => <Cell key={i} fill={e.state === "US Avg" ? "#cbd5e1" : "#ef4444"} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-3 space-y-1.5">
+                  {[
+                    { l: "OH household monthly increase by 2028", v: "+$70/mo" },
+                    { l: "Virginia 5-yr cumulative increase", v: "+267%" },
+                  ].map((x) => (
+                    <div key={x.l} className="flex justify-between items-center">
+                      <span className="text-xs text-slate-500">{x.l}</span>
+                      <span className="mono text-sm font-black text-red-600">{x.v}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Electricity price trend */}
+              <div className="lc-card lc-card-red p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">US Avg Residential Electricity Price (¢/kWh)</div>
                 <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={ELECTRICITY_PRICE_DATA} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}¢`} domain={[10, 30]} />
+                      <Tooltip content={<ChartTip fmt={(v) => `${v}¢ per kWh`} />} />
+                      <Line type="monotone" dataKey="cents" name="Price" stroke="#ef4444" strokeWidth={2.5} dot={{ fill: "#ef4444", r: 4, strokeWidth: 0 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
+            {/* 7-state burden table */}
+            <div className="lc-card overflow-hidden mb-5">
+              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wide">$4.3B Burden — State-by-State Breakdown</div>
+                <div className="mono text-xs text-red-600 font-bold">Source: Union of Concerned Scientists, 2024</div>
+              </div>
+              <div className="overflow-x-auto scrollbar-thin">
+                <table className="lt-table min-w-[680px]">
+                  <thead>
+                    <tr>
+                      <th className="text-left">State</th>
+                      <th className="text-right">Burden ($M)</th>
+                      <th className="text-right">Bill Increase YoY</th>
+                      <th className="text-center">Regulated?</th>
+                      <th className="text-left">Mechanism</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {RATEPAYER_BURDEN_7STATES.map((r, i) => (
+                      <tr key={i}>
+                        <td className="font-bold text-slate-900">{r.state} <span className="text-slate-400 font-normal mono text-xs">({r.code})</span></td>
+                        <td className="text-right mono font-black text-red-600">${r.burdenM.toLocaleString()}M</td>
+                        <td className="text-right mono font-bold" style={{ color: r.yoyPct >= 12 ? "#ef4444" : r.yoyPct >= 8 ? "#f59e0b" : "#64748b" }}>+{r.yoyPct}%</td>
+                        <td className="text-center">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded mono ${r.regulated ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                            {r.regulated ? "Yes" : "No"}
+                          </span>
+                        </td>
+                        <td className="text-slate-500" style={{ fontSize: 11, maxWidth: 300 }}>{r.note}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="bg-red-50 border-t border-red-100 px-5 py-3 flex items-center justify-between">
+                <span className="text-xs text-red-700 font-semibold">Total residential ratepayer burden (7 states)</span>
+                <span className="mono text-xl font-black text-red-600">$4.3B</span>
+              </div>
+            </div>
+
+            {/* Grid stress metrics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div className="lc-card lc-card-blue p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">DC Share of US Electricity Consumption</div>
+                <div className="h-[180px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={DC_ELECTRICITY_SHARE} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
                       <defs>
@@ -593,65 +831,20 @@ export default function Dashboard() {
                   </ResponsiveContainer>
                 </div>
               </div>
-              <div className="lc-card lc-card-red p-5">
-                <div className="text-xs font-bold text-slate-500 mb-3">US Avg Electricity Price (¢/kWh)</div>
-                <div className="h-[220px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={ELECTRICITY_PRICE_DATA} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}¢`} domain={[10, 30]} />
-                      <Tooltip content={<ChartTip fmt={(v) => `${v}¢ per kWh`} />} />
-                      <Line type="monotone" dataKey="cents" name="Price" stroke="#ef4444" strokeWidth={2.5} dot={{ fill: "#ef4444", r: 4, strokeWidth: 0 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="grid grid-cols-2 gap-3 content-start">
+                {[
+                  { l: "Share of US Load Growth by 2030", v: "60%", c: "#3b82f6", icon: Zap },
+                  { l: "1GW Facility = Household Equivalent", v: "800K homes", c: "#f59e0b", icon: Building2 },
+                  { l: "DC Daily Water Consumption (2021)", v: "449M gal", c: "#06b6d4", icon: Droplets },
+                  { l: "Farmland Converted to DCs (AFBF)", v: "4,925 sites", c: "#ef4444", icon: Leaf },
+                ].map((x) => (
+                  <div key={x.l} className="lc-card p-4 hover:shadow-md transition-shadow" style={{ borderTop: `3px solid ${x.c}` }}>
+                    <x.icon size={15} style={{ color: x.c }} className="mb-2" />
+                    <div className="mono text-xl font-black" style={{ color: x.c }}>{x.v}</div>
+                    <div className="text-xs text-slate-500 mt-1 leading-tight">{x.l}</div>
+                  </div>
+                ))}
               </div>
-              <div className="lc-card lc-card-red p-5">
-                <div className="text-xs font-bold text-slate-500 mb-3">Residential Bill Increase YoY — DC-Heavy States</div>
-                <div className="h-[160px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={RATEPAYER_STATE_YOY} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                      <XAxis dataKey="state" tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}%`} />
-                      <Tooltip content={<ChartTip fmt={(v) => `+${v}% YoY`} />} />
-                      <Bar dataKey="pct" name="YoY Increase" radius={[4, 4, 0, 0]}>
-                        {RATEPAYER_STATE_YOY.map((e, i) => <Cell key={i} fill={e.state === "US Avg" ? "#cbd5e1" : "#ef4444"} />)}
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-3 space-y-2">
-                  {[
-                    { l: "Ratepayer burden (7 states)", v: "$4.3B", c: "#ef4444" },
-                    { l: "OH households +/mo by 2028", v: "+$70", c: "#ef4444" },
-                    { l: "PJM capacity auction jump (YoY)", v: "+568%", c: "#ef4444" },
-                    { l: "Virginia 5-yr price increase", v: "+267%", c: "#f59e0b" },
-                  ].map((x) => (
-                    <div key={x.l} className="flex justify-between items-center">
-                      <span className="text-xs text-slate-500">{x.l}</span>
-                      <span className="mono text-sm font-black" style={{ color: x.c }}>{x.v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Energy metrics row */}
-            <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {[
-                { l: "Share of US Load Growth by 2030", v: "60%", c: "#3b82f6", icon: Zap },
-                { l: "1GW Facility = Household Equivalent", v: "800K", c: "#f59e0b", icon: Building2 },
-                { l: "DC Daily Water Consumption (2021)", v: "449M gal", c: "#06b6d4", icon: Droplets },
-                { l: "Farmland DCs Converted (AFBF)", v: "4,925", c: "#ef4444", icon: Leaf },
-              ].map((x) => (
-                <div key={x.l} className="lc-card p-4 hover:shadow-md transition-shadow" style={{ borderTop: `3px solid ${x.c}` }}>
-                  <x.icon size={16} style={{ color: x.c }} className="mb-2" />
-                  <div className="mono text-2xl font-black" style={{ color: x.c }}>{x.v}</div>
-                  <div className="text-xs text-slate-500 mt-1 leading-tight">{x.l}</div>
-                </div>
-              ))}
             </div>
           </section>
 
