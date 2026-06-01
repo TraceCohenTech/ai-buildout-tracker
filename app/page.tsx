@@ -9,46 +9,40 @@ import {
 import {
   Zap, DollarSign, Briefcase, Building2, AlertTriangle,
   TrendingUp, Droplets, ChevronDown, ChevronUp,
-  Server, Radio, Cpu, ThermometerSun,
+  Server, Radio, Cpu, Atom, Leaf, HardDrive,
 } from "lucide-react";
 import {
-  HYPERSCALER_CAPEX_2026,
-  CAPEX_RAMP,
-  TOP_PROJECTS,
-  STATES_DATA,
-  MW_BY_STATE,
-  OPERATOR_CATEGORIES,
-  JOBS_PER_BILLION,
-  PROJECT_STATUS_BOARD,
-  FISCAL_BENEFIT_RATIOS,
-  ELECTRICITY_PRICE_DATA,
-  DC_ELECTRICITY_SHARE,
-  HOST_COUNTIES,
-  RATEPAYER_STATE_YOY,
-  TICKER_ITEMS,
+  HYPERSCALER_CAPEX_2026, CAPEX_RAMP, TOP_PROJECTS,
+  STATES_DATA, MW_BY_STATE, METRO_MARKETS, REGIONAL_PIPELINE,
+  JOBS_PER_BILLION, PROJECT_STATUS_BOARD,
+  FISCAL_BENEFIT_RATIOS, ELECTRICITY_PRICE_DATA, DC_ELECTRICITY_SHARE,
+  HOST_COUNTIES, RATEPAYER_STATE_YOY, NUCLEAR_DC_PAIRINGS,
+  GAS_PLANT_BUILDOUTS, TICKER_ITEMS,
 } from "@/lib/data";
 
-/* ─── Tooltip ─── */
-const DarkTooltip = ({ active, payload, label }: {
+/* ─── Shared tooltip ─── */
+const ChartTip = ({ active, payload, label, fmt }: {
   active?: boolean;
-  payload?: { name: string; value: unknown; color?: string }[];
+  payload?: { name?: string; value?: unknown; color?: string }[];
   label?: string;
+  fmt?: (v: unknown, name?: string) => string;
 }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: "#1a1a1a", border: "1px solid #3a3a3a", borderRadius: 4, padding: "8px 12px" }}>
-      {label && <div style={{ color: "#94a3b8", fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 4 }}>{label}</div>}
+    <div className="rounded-lg shadow-xl border text-sm" style={{ background: "#fff", borderColor: "#e2e8f0", padding: "10px 14px", minWidth: 140 }}>
+      {label && <div className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">{label}</div>}
       {payload.map((p, i) => (
-        <div key={i} style={{ color: p.color || "#f1f5f9", fontFamily: "monospace", fontSize: 13, fontWeight: 700 }}>
-          {p.name}: {String(p.value)}
+        <div key={i} style={{ color: p.color || "#0f172a" }} className="font-bold">
+          {p.name && <span className="text-slate-500 font-normal">{p.name}: </span>}
+          {fmt ? fmt(p.value, p.name) : String(p.value ?? "")}
         </div>
       ))}
     </div>
   );
 };
 
-/* ─── Status Badge ─── */
-function StatusBadge({ status }: { status: string }) {
+/* ─── Status badge ─── */
+function Badge({ status }: { status: string }) {
   const s = status.toLowerCase();
   if (s.includes("construction") || s.includes("building")) return <span className="badge-construction">{status}</span>;
   if (s.includes("planned")) return <span className="badge-planned">{status}</span>;
@@ -58,37 +52,54 @@ function StatusBadge({ status }: { status: string }) {
   return <span className="badge-mixed">{status}</span>;
 }
 
-/* ─── LED dot ─── */
+/* ─── LED ─── */
 function Led({ color }: { color: string }) {
-  const cls = color === "#22c55e" ? "led-green" : color === "#f59e0b" ? "led-amber" : color === "#ef4444" ? "led-red" : "led-grey";
-  return <span className={cls} />;
+  return <span className={color === "#22c55e" ? "led-green" : color === "#f59e0b" ? "led-amber" : color === "#ef4444" ? "led-red" : "led-grey"} />;
 }
 
-/* ─── Section Header ─── */
-function SysHeader({ label, title, sub }: { label: string; title: string; sub?: string }) {
+/* ─── Light card section header ─── */
+function SH({ n, title, sub }: { n: string; title: string; sub?: string }) {
   return (
     <div className="mb-5">
-      <div className="sys-label mb-1">{label}</div>
-      <h2 className="text-xl sm:text-2xl font-black text-slate-100">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed max-w-3xl">{sub}</p>}
+      <div className="flex items-center gap-2 mb-1">
+        <span className="lc-label">{n}</span>
+      </div>
+      <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">{title}</h2>
+      {sub && <p className="text-sm text-slate-500 mt-1.5 leading-relaxed max-w-3xl">{sub}</p>}
     </div>
   );
 }
 
-/* ─── Stat Card ─── */
-function StatCard({ label, value, sub, icon: Icon, accent = "amber" }: {
+/* ─── Light stat card ─── */
+function LStat({ label, value, sub, icon: Icon, accent = "amber" }: {
   label: string; value: string; sub?: string; icon: React.ElementType; accent?: string;
 }) {
-  const accentClass = accent === "amber" ? "dc-card-amber" : accent === "red" ? "dc-card-red" : accent === "green" ? "dc-card-green" : "dc-card-cyan";
-  const iconColor = accent === "amber" ? "#f59e0b" : accent === "red" ? "#ef4444" : accent === "green" ? "#22c55e" : "#06b6d4";
+  const map: Record<string, { bar: string; icon: string; val: string }> = {
+    amber: { bar: "lc-card-amber", icon: "text-amber-500", val: "text-amber-600" },
+    red:   { bar: "lc-card-red",   icon: "text-red-500",   val: "text-red-600" },
+    green: { bar: "lc-card-green", icon: "text-green-600", val: "text-green-700" },
+    blue:  { bar: "lc-card-blue",  icon: "text-blue-600",  val: "text-blue-700" },
+  };
+  const t = map[accent] ?? map.amber;
   return (
-    <div className={`dc-card ${accentClass} stat-top-amber p-4 sm:p-5`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="sys-label">{label}</div>
-        <Icon size={16} color={iconColor} />
+    <div className={`lc-card ${t.bar} p-4 sm:p-5 hover:shadow-md transition-shadow`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="lc-label">{label}</div>
+        <Icon size={16} className={t.icon} />
       </div>
-      <div className="mono-num text-2xl sm:text-3xl font-black" style={{ color: iconColor }}>{value}</div>
-      {sub && <div className="text-xs text-slate-500 mt-2 leading-tight">{sub}</div>}
+      <div className={`mono text-2xl sm:text-3xl font-black ${t.val}`}>{value}</div>
+      {sub && <div className="text-xs text-slate-500 mt-2 leading-snug">{sub}</div>}
+    </div>
+  );
+}
+
+/* ─── Evidence chip ─── */
+function EvidenceChip({ title, val, sub, color }: { title: string; val: string; sub: string; color: string }) {
+  return (
+    <div className="lc-card p-4 hover:shadow-md transition-shadow" style={{ borderTop: `3px solid ${color}` }}>
+      <div className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">{title}</div>
+      <div className="mono text-xl font-black" style={{ color }}>{val}</div>
+      <div className="text-xs text-slate-500 mt-1 leading-snug">{sub}</div>
     </div>
   );
 }
@@ -101,54 +112,49 @@ export default function Dashboard() {
   const tickerDouble = [...TICKER_ITEMS, ...TICKER_ITEMS];
 
   return (
-    <main className="min-h-screen bg-grid" style={{ backgroundColor: "#0f0f0f" }}>
+    <main className="min-h-screen">
 
-      {/* ═══ TOP STATUS BAR ═══ */}
-      <div style={{ background: "#0a0a0a", borderBottom: "1px solid #1f1f1f" }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-3 py-2 text-xs">
+      {/* ══ TOP STATUS BAR (dark) ══ */}
+      <div style={{ background: "#0a0a0a", borderBottom: "1px solid #1a1a1a" }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-3 py-2">
           <div className="flex items-center gap-1.5 shrink-0">
             <span className="led-green" />
-            <span className="mono-num text-green-400 font-bold">SYS ONLINE</span>
+            <span className="mono text-green-400 text-xs font-bold">SYS ONLINE</span>
           </div>
-          <span style={{ color: "#2a2a2a" }}>|</span>
+          <span className="text-slate-700 text-xs">|</span>
           <div className="flex items-center gap-1.5 shrink-0">
-            <Radio size={11} color="#f59e0b" />
-            <span className="text-amber-500 font-bold uppercase tracking-wider">LIVE</span>
+            <Radio size={11} className="text-amber-500" />
+            <span className="text-amber-500 text-xs font-bold uppercase tracking-wider">LIVE</span>
           </div>
-          <span style={{ color: "#2a2a2a" }}>|</span>
-          <div className="text-slate-500 font-mono">JUNE 2026 · US AI INFRASTRUCTURE COMMAND</div>
+          <span className="text-slate-700 text-xs">|</span>
+          <div className="mono text-slate-600 text-xs hidden sm:block">JUNE 2026 · US AI INFRASTRUCTURE COMMAND</div>
         </div>
       </div>
 
-      {/* ═══ LIVE TICKER ═══ */}
-      <div style={{ background: "#111", borderBottom: "1px solid #2a2a2a", overflow: "hidden" }}>
+      {/* ══ TICKER (dark) ══ */}
+      <div style={{ background: "#111", borderBottom: "1px solid #222", overflow: "hidden" }}>
         <div className="ticker-track py-2">
           {tickerDouble.map((item, i) => (
-            <span key={i} className="mono-num text-xs text-slate-400 px-8 shrink-0 whitespace-nowrap">
+            <span key={i} className="mono text-xs text-slate-400 px-8 shrink-0 whitespace-nowrap">
               <span className="text-amber-500 mr-2">▶</span>{item}
             </span>
           ))}
         </div>
       </div>
 
-      {/* ═══ HERO ═══ */}
-      <div style={{ background: "linear-gradient(180deg, #161616 0%, #0f0f0f 100%)", borderBottom: "1px solid #2a2a2a" }}>
+      {/* ══ HERO (dark industrial) ══ */}
+      <div className="bg-grid" style={{ background: "linear-gradient(180deg, #161616 0%, #111 100%)", borderBottom: "1px solid #222" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <div className="flex items-center gap-3 mb-5">
-            <Cpu size={20} color="#f59e0b" />
+          <div className="flex items-center gap-2 mb-5">
+            <Cpu size={18} className="text-amber-500" />
             <span className="sys-label">US AI INFRASTRUCTURE · MASTER COMMAND</span>
           </div>
-          <h1 className="text-4xl sm:text-6xl font-black leading-none mb-2 tracking-tight" style={{ color: "#f1f5f9" }}>
-            AI BUILDOUT
-          </h1>
-          <h1 className="text-4xl sm:text-6xl font-black leading-none mb-5 tracking-tight amber-glow">
-            TRACKER
-          </h1>
+          <h1 className="text-4xl sm:text-6xl font-black leading-none tracking-tight text-slate-100">AI BUILDOUT</h1>
+          <h1 className="text-4xl sm:text-6xl font-black leading-none tracking-tight amber-glow mb-5">TRACKER</h1>
           <p className="text-sm sm:text-base text-slate-500 max-w-2xl mb-8 leading-relaxed">
-            $290B+ in announced data center investment is rewiring rural America — flooding depopulating counties with construction crews,
-            overloading the electrical grid, and reshaping local fiscal policy in ways that will last decades.
+            $290B+ in announced data center investment is rewiring rural America — flooding depopulating counties with
+            construction crews, overloading the electrical grid, and reshaping local fiscal policy in ways that will last decades.
           </p>
-
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
             {[
               { label: "Identified CapEx", value: "$290B+", color: "#f59e0b" },
@@ -159,7 +165,7 @@ export default function Dashboard() {
               { label: "US Elec. Load by 2030", value: "8–12%", color: "#ef4444" },
             ].map((s) => (
               <div key={s.label} className="dc-card p-3 sm:p-4" style={{ borderTop: `2px solid ${s.color}` }}>
-                <div className="mono-num text-xl sm:text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
+                <div className="mono text-xl sm:text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
                 <div className="sys-label mt-1" style={{ fontSize: 9 }}>{s.label}</div>
               </div>
             ))}
@@ -167,288 +173,141 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-12">
+      {/* ══════════════════════════════════
+          LIGHT CONTENT SECTIONS
+      ══════════════════════════════════ */}
+      <div style={{ background: "#f8fafc" }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-16">
 
-        {/* ═══ SYSTEM STAT CARDS ═══ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <StatCard label="Near-Term Pipeline" value="65" sub="Projects — $92.1B breaking ground" icon={Building2} accent="amber" />
-          <StatCard label="YTD CapEx (Apr 2026)" value="$49.5B" sub="74 projects broke ground" icon={DollarSign} accent="green" />
-          <StatCard label="Perm. Jobs (Disclosed)" value="10,000+" sub="$18M–$54M capex per job" icon={Briefcase} accent="cyan" />
-          <StatCard label="Ratepayer Burden" value="$4.3B" sub="Across 7 states · IL +16% / VA +13%" icon={AlertTriangle} accent="red" />
-        </div>
-
-        {/* ═══ CAPEX RAMP + HYPERSCALER ═══ */}
-        <section>
-          <SysHeader label="Section 01 · Capital Deployment" title="The Spending Ramp" sub="Hyperscaler AI infrastructure spend has grown 10× in three years and shows no sign of plateauing. The 2026 pace exceeds the GDP of Switzerland. The $7T through 2030 projection would make this the largest coordinated private capital deployment in history." />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-            {/* CapEx ramp */}
-            <div className="dc-card dc-card-amber p-4 sm:p-5">
-              <div className="sys-label mb-4">Hyperscaler Global CapEx ($B) — Trajectory</div>
-              <div className="h-[240px] sm:h-[280px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={CAPEX_RAMP} margin={{ left: 0, right: 20, top: 10, bottom: 10 }}>
-                    <defs>
-                      <linearGradient id="capexGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.02} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" />
-                    <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} />
-                    <YAxis tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} tickFormatter={(v) => `$${v}B`} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`$${v}B`, "CapEx"]} />
-                    <Area type="monotone" dataKey="spend" name="CapEx" stroke="#f59e0b" fill="url(#capexGrad)" strokeWidth={2} dot={{ fill: "#f59e0b", r: 4 }} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Hyperscaler breakdown */}
-            <div className="dc-card dc-card-amber p-4 sm:p-5">
-              <div className="sys-label mb-4">2026 CapEx by Operator ($B)</div>
-              <div className="h-[240px] sm:h-[280px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={HYPERSCALER_CAPEX_2026} layout="vertical" margin={{ left: 0, right: 50, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} tickFormatter={(v) => `$${v}B`} />
-                    <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`$${v}B`, "2026 CapEx"]} />
-                    <Bar dataKey="capex" name="2026 CapEx" radius={[0, 3, 3, 0]}>
-                      {HYPERSCALER_CAPEX_2026.map((e, i) => <Cell key={i} fill={e.color} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 dc-card p-3 mono-num text-center">
-                <span className="sys-label">5-Company 2026 Total</span>
-                <div className="text-2xl font-black amber-glow mt-1">$675B</div>
-              </div>
-            </div>
+          {/* ── Stat cards ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <LStat label="Near-Term Pipeline" value="65" sub="Projects — $92.1B breaking ground" icon={Building2} accent="amber" />
+            <LStat label="YTD CapEx (Apr 2026)" value="$49.5B" sub="74 projects broke ground in 2026" icon={DollarSign} accent="green" />
+            <LStat label="Perm. Jobs (Disclosed)" value="10,000+" sub="$18M–$54M capex per permanent job" icon={Briefcase} accent="blue" />
+            <LStat label="Ratepayer Burden" value="$4.3B" sub="7 states · IL +16% / VA +13% / OH +12%" icon={AlertTriangle} accent="red" />
           </div>
-        </section>
 
-        {/* ═══ PROJECT STATUS BOARD ═══ */}
-        <section>
-          <SysHeader label="Section 02 · Facility Status" title="Project Status Board" sub="Real-time status of major US AI data center projects. Green = operational. Amber = under construction. Grey = planned or announced." />
-          <div className="dc-card overflow-hidden">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-0">
-              {PROJECT_STATUS_BOARD.map((p, i) => (
-                <div
-                  key={i}
-                  className="p-3 border-b border-r"
-                  style={{ borderColor: "#1f1f1f" }}
-                >
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Led color={p.statusColor} />
-                    <span className="mono-num text-xs font-bold" style={{ color: p.statusColor }}>{p.status}</span>
-                  </div>
-                  <div className="text-xs font-bold text-slate-200 leading-tight">{p.name}</div>
-                  <div className="sys-label mt-1" style={{ fontSize: 9 }}>{p.operator} · {p.state}</div>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="mono-num text-xs font-bold text-amber-500">{p.capex}</div>
-                    {p.mw && <div className="mono-num text-xs text-cyan-500">{p.mw.toLocaleString()}MW</div>}
-                  </div>
+          {/* ── Section 1: Capital Deployment ── */}
+          <section>
+            <SH n="01 · Capital Deployment" title="The Spending Ramp"
+              sub="Hyperscaler AI infrastructure spend has grown nearly 10× in three years. The 2026 pace of $675B exceeds the GDP of Switzerland. The $7T through-2030 projection would make this the largest coordinated private capital deployment in history." />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div className="lc-card lc-card-amber p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">Global Hyperscaler CapEx Trajectory ($B)</div>
+                <div className="h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={CAPEX_RAMP} margin={{ left: 0, right: 20, top: 10, bottom: 10 }}>
+                      <defs>
+                        <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.18} />
+                          <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.01} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `$${v}B`} />
+                      <Tooltip content={<ChartTip fmt={(v) => `$${v}B`} />} />
+                      <Area type="monotone" dataKey="spend" name="CapEx" stroke="#f59e0b" fill="url(#cg)" strokeWidth={2.5} dot={{ fill: "#f59e0b", r: 4, strokeWidth: 0 }} />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
-              ))}
-            </div>
-            <div className="p-3 flex items-center gap-4 border-t" style={{ borderColor: "#1f1f1f", background: "#141414" }}>
-              {[
-                { color: "#22c55e", label: "ONLINE", cls: "led-green" },
-                { color: "#f59e0b", label: "BUILDING", cls: "led-amber" },
-                { color: "#94a3b8", label: "PLANNED", cls: "led-grey" },
-                { color: "#475569", label: "ANNOUNCED", cls: "led-grey" },
-              ].map((item) => (
-                <div key={item.label} className="flex items-center gap-1.5">
-                  <span className={item.cls} />
-                  <span className="sys-label" style={{ fontSize: 9 }}>{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ TOP PROJECTS TABLE ═══ */}
-        <section>
-          <SysHeader label="Section 03 · Project Registry" title="Top Projects by CapEx" sub="Largest announced AI infrastructure projects sorted by investment size. Many host counties have no prior industrial anchor at this scale." />
-          <div className="dc-card overflow-hidden">
-            <div className="overflow-x-auto scrollbar-dark">
-              <table className="dc-table w-full min-w-[800px]">
-                <thead>
-                  <tr>
-                    <th className="text-left">Company</th>
-                    <th className="text-left">Project</th>
-                    <th className="text-left">Location</th>
-                    <th className="text-center">State</th>
-                    <th className="text-center">Status</th>
-                    <th className="text-right">CapEx</th>
-                    <th className="text-right">Const. Jobs</th>
-                    <th className="text-right">Perm. Jobs</th>
-                    <th className="text-right">MW</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayedProjects.map((p, i) => (
-                    <tr key={i}>
-                      <td className="font-bold text-slate-200">{p.company}</td>
-                      <td className="text-slate-400">{p.project}</td>
-                      <td className="text-slate-500">{p.location}</td>
-                      <td className="text-center">
-                        <span className="mono-num text-xs font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">{p.state}</span>
-                      </td>
-                      <td className="text-center"><StatusBadge status={p.status} /></td>
-                      <td className="text-right mono-num font-bold text-amber-400">{p.capex}</td>
-                      <td className="text-right mono-num text-slate-400">{p.constructionJobs}</td>
-                      <td className="text-right mono-num text-slate-400">{p.permJobs}</td>
-                      <td className="text-right mono-num text-cyan-500">{p.mw ? `${p.mw.toLocaleString()}` : "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <button
-              onClick={() => setProjectsExpanded(!projectsExpanded)}
-              className="w-full py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors"
-              style={{ color: "#f59e0b", background: "#141414", borderTop: "1px solid #1f1f1f" }}
-            >
-              {projectsExpanded ? <><ChevronUp size={14} /> COLLAPSE</> : <><ChevronDown size={14} /> EXPAND ALL {TOP_PROJECTS.length} PROJECTS</>}
-            </button>
-          </div>
-        </section>
-
-        {/* ═══ MW CAPACITY + MARKET SHARE ═══ */}
-        <section>
-          <SysHeader label="Section 04 · Power Infrastructure" title="Megawatt Capacity by State" sub="MW is the real unit of measure for data center investment — more meaningful than raw dollar figures. Texas is poised to become the largest US market by committed MW as the Stargate and Vantage programs come online." />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="dc-card dc-card-cyan p-4 sm:p-5 lg:col-span-2">
-              <div className="sys-label mb-4">Committed MW by State (Operational + Under Construction + Planned)</div>
-              <div className="h-[280px] sm:h-[320px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={[...MW_BY_STATE].sort((a, b) => b.mw - a.mw)} layout="vertical" margin={{ left: 10, right: 60, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} tickFormatter={(v) => `${v.toLocaleString()}MW`} />
-                    <YAxis type="category" dataKey="state" width={36} tick={{ fontSize: 12, fill: "#94a3b8", fontFamily: "monospace", fontWeight: 700 }} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`${Number(v).toLocaleString()}MW`, "Capacity"]} />
-                    <Bar dataKey="mw" name="MW" radius={[0, 3, 3, 0]}>
-                      {MW_BY_STATE.sort((a, b) => b.mw - a.mw).map((e, i) => <Cell key={i} fill={e.color} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
               </div>
-              <div className="mt-3 flex gap-4 flex-wrap">
+              <div className="lc-card lc-card-amber p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">2026 CapEx by Hyperscaler ($B)</div>
+                <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={HYPERSCALER_CAPEX_2026} layout="vertical" margin={{ left: 0, right: 55, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                      <XAxis type="number" tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `$${v}B`} />
+                      <YAxis type="category" dataKey="name" width={145} tick={{ fontSize: 11, fill: "#475569" }} />
+                      <Tooltip content={<ChartTip fmt={(v) => `$${v}B`} />} />
+                      <Bar dataKey="capex" name="2026 CapEx" radius={[0, 4, 4, 0]}>
+                        {HYPERSCALER_CAPEX_2026.map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-3 bg-amber-50 border border-amber-100 rounded-lg p-3 flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-800">Combined 2026 Total</span>
+                  <span className="mono text-xl font-black text-amber-600">$675B</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Section 2: Project Status Board (stays dark for impact) ── */}
+          <section>
+            <SH n="02 · Facility Status" title="Project Status Board"
+              sub="Real-time status of major US AI data center projects by construction stage. Green = operational. Amber = under construction. Grey = planned or announced." />
+            <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6" style={{ background: "#111" }}>
+                {PROJECT_STATUS_BOARD.map((p, i) => (
+                  <div key={i} className="p-3 border-b border-r hover:bg-white/5 transition-colors cursor-default" style={{ borderColor: "#1f1f1f" }}>
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <Led color={p.statusColor} />
+                      <span className="mono text-xs font-bold" style={{ color: p.statusColor }}>{p.status}</span>
+                    </div>
+                    <div className="text-xs font-bold text-slate-200 leading-tight">{p.name}</div>
+                    <div className="text-slate-500 mt-0.5" style={{ fontSize: 9, letterSpacing: "0.05em" }}>{p.operator} · {p.state}</div>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="mono text-xs font-bold text-amber-400">{p.capex}</span>
+                      {p.mw && <span className="mono text-xs text-cyan-400">{p.mw.toLocaleString()}MW</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-5 px-4 py-3 bg-slate-50 border-t border-slate-200">
                 {[
-                  { color: "#22c55e", label: "Operational" },
-                  { color: "#f59e0b", label: "Under Construction" },
-                  { color: "#94a3b8", label: "Planned" },
+                  { cls: "led-green", label: "Online" },
+                  { cls: "led-amber", label: "Building" },
+                  { cls: "led-grey",  label: "Planned / Announced" },
                 ].map((l) => (
                   <div key={l.label} className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-sm" style={{ background: l.color }} />
-                    <span className="sys-label">{l.label}</span>
+                    <span className={l.cls} />
+                    <span className="text-xs text-slate-500 font-medium">{l.label}</span>
                   </div>
                 ))}
               </div>
             </div>
+          </section>
 
-            {/* Operator category pie */}
-            <div className="dc-card dc-card-amber p-4 sm:p-5">
-              <div className="sys-label mb-4">Market Share by Operator Category (% of Pipeline MW)</div>
-              <div className="h-[220px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={OPERATOR_CATEGORIES}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={85}
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {OPERATOR_CATEGORIES.map((e, i) => <Cell key={i} fill={e.color} />)}
-                    </Pie>
-                    <Tooltip
-                      content={({ active, payload }) => {
-                        if (!active || !payload?.length) return null;
-                        const d = payload[0].payload as typeof OPERATOR_CATEGORIES[0];
-                        return (
-                          <div style={{ background: "#1a1a1a", border: "1px solid #3a3a3a", borderRadius: 4, padding: "8px 12px" }}>
-                            <div style={{ color: d.color, fontWeight: 700, fontSize: 13 }}>{d.name}: {d.value}%</div>
-                            <div style={{ color: "#64748b", fontSize: 10, marginTop: 2 }}>{d.examples}</div>
-                          </div>
-                        );
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="space-y-2 mt-2">
-                {OPERATOR_CATEGORIES.map((c) => (
-                  <div key={c.name} className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: c.color }} />
-                      <span className="text-xs text-slate-400">{c.name}</span>
-                    </div>
-                    <span className="mono-num text-sm font-bold" style={{ color: c.color }}>{c.value}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ STATE LEADERBOARD ═══ */}
-        <section>
-          <SysHeader label="Section 05 · State Rankings" title="State Leaderboard" sub="Virginia leads in operational facilities and economic maturity. Texas is projected to surpass it by 2030." />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="dc-card dc-card-amber p-4 sm:p-5">
-              <div className="sys-label mb-4">Operational Facilities (Top 10)</div>
-              <div className="h-[280px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={[...STATES_DATA].filter(s => s.operational > 0).sort((a, b) => b.operational - a.operational).slice(0, 10)}
-                    margin={{ left: 0, right: 20, top: 10, bottom: 10 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                    <XAxis dataKey="state" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} />
-                    <YAxis tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v, name) => [String(v), String(name) === "operational" ? "Operational" : "Pipeline"]} />
-                    <Bar dataKey="operational" name="Operational" stackId="a">
-                      {[...STATES_DATA].filter(s => s.operational > 0).sort((a, b) => b.operational - a.operational).slice(0, 10).map((_, i) => (
-                        <Cell key={i} fill={i === 0 ? "#f59e0b" : i === 1 ? "#d97706" : "#92400e"} />
-                      ))}
-                    </Bar>
-                    <Bar dataKey="pipeline" name="Pipeline" stackId="a" fill="#292524" radius={[3, 3, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className="dc-card overflow-hidden">
-              <div className="overflow-x-auto scrollbar-dark">
-                <table className="dc-table w-full min-w-[400px]">
+          {/* ── Section 3: Projects Table ── */}
+          <section>
+            <SH n="03 · Project Registry" title="Top Projects by CapEx"
+              sub="The largest announced AI data center investments in the United States. Many host counties have never seen a private investment exceeding $100M — these numbers are measured in billions." />
+            <div className="lc-card overflow-hidden">
+              <div className="overflow-x-auto scrollbar-thin">
+                <table className="lt-table min-w-[860px]">
                   <thead>
                     <tr>
-                      <th className="text-left">State</th>
-                      <th className="text-right">Op.</th>
-                      <th className="text-right">Pipeline</th>
-                      <th className="text-right">GDP Impact</th>
-                      <th className="text-right">Jobs</th>
+                      <th className="text-left">Company</th>
+                      <th className="text-left">Project</th>
+                      <th className="text-left">Location</th>
+                      <th className="text-center">State</th>
+                      <th className="text-center">Status</th>
+                      <th className="text-right">CapEx</th>
+                      <th className="text-right">Const. Jobs</th>
+                      <th className="text-right">Perm. Jobs</th>
+                      <th className="text-right">Capacity</th>
+                      <th className="text-right">10-Yr Impact</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {displayedStates.map((s, i) => (
+                    {displayedProjects.map((p, i) => (
                       <tr key={i}>
-                        <td>
-                          <div className="mono-num font-bold text-slate-200">{s.state}</div>
-                          <div className="text-slate-600" style={{ fontSize: 10 }}>{s.state_name}</div>
+                        <td className="font-semibold text-slate-900">{p.company}</td>
+                        <td className="text-slate-700">{p.project}</td>
+                        <td className="text-slate-500">{p.location}</td>
+                        <td className="text-center">
+                          <span className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded mono">{p.state}</span>
                         </td>
-                        <td className="text-right mono-num font-bold text-amber-400">{s.operational || "—"}</td>
-                        <td className="text-right mono-num text-slate-500">{s.pipeline || "—"}</td>
-                        <td className="text-right mono-num text-green-400 font-bold" style={{ fontSize: 11 }}>
-                          {s.gdpB ? `$${s.gdpB}B` : "—"}
-                        </td>
-                        <td className="text-right mono-num text-slate-400" style={{ fontSize: 11 }}>
-                          {s.jobs ? s.jobs.toLocaleString() : "—"}
+                        <td className="text-center"><Badge status={p.status} /></td>
+                        <td className="text-right mono font-bold text-slate-900">{p.capex}</td>
+                        <td className="text-right mono text-slate-500">{p.constructionJobs}</td>
+                        <td className="text-right mono text-slate-500">{p.permJobs}</td>
+                        <td className="text-right mono text-blue-600">{p.mw ? `${p.mw.toLocaleString()}MW` : "—"}</td>
+                        <td className="text-right mono text-green-600 font-semibold">
+                          {p.tenYrImpact ? `$${(p.tenYrImpact / 1e9).toFixed(1)}B` : "—"}
                         </td>
                       </tr>
                     ))}
@@ -456,423 +315,610 @@ export default function Dashboard() {
                 </table>
               </div>
               <button
-                onClick={() => setStatesExpanded(!statesExpanded)}
-                className="w-full py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5"
-                style={{ color: "#f59e0b", background: "#141414", borderTop: "1px solid #1f1f1f" }}
+                onClick={() => setProjectsExpanded(!projectsExpanded)}
+                className="w-full py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 text-amber-700 bg-amber-50 hover:bg-amber-100 border-t border-slate-200 transition-colors"
               >
-                {statesExpanded ? <><ChevronUp size={12} /> COLLAPSE</> : <><ChevronDown size={12} /> ALL {STATES_DATA.length} STATES</>}
+                {projectsExpanded ? <><ChevronUp size={13} /> Show Less</> : <><ChevronDown size={13} /> Show All {TOP_PROJECTS.length} Projects</>}
               </button>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* ═══ JOBS PER $B + FISCAL RATIOS ═══ */}
-        <section>
-          <SysHeader label="Section 06 · Economic Analysis" title="The Jobs Math & Fiscal Returns" sub="Data centers create extraordinarily few permanent jobs per dollar invested — but generate fiscal returns that dwarf every other land-use type. The industry creates value for governments, not workers." />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-            {/* Jobs per $B */}
-            <div className="dc-card dc-card-red p-4 sm:p-5">
-              <div className="sys-label mb-1">Permanent Jobs per $1B Invested — Industry Comparison</div>
-              <p className="text-xs text-slate-600 mb-4">Data centers are the most capital-intensive, lowest-jobs-per-dollar industry in the US economy. An auto plant creates 33× more permanent jobs per billion invested.</p>
-              <div className="h-[240px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={JOBS_PER_BILLION} layout="vertical" margin={{ left: 10, right: 60, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} />
-                    <YAxis type="category" dataKey="industry" width={120} tick={{ fontSize: 11, fill: "#94a3b8" }} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`${v} jobs`, "Per $1B"]} />
-                    <Bar dataKey="jobsPerB" name="Jobs per $1B" radius={[0, 3, 3, 0]}>
-                      {JOBS_PER_BILLION.map((e, i) => <Cell key={i} fill={e.color} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 dc-card p-3 flex gap-6">
-                <div>
-                  <div className="sys-label">Data Centers</div>
-                  <div className="mono-num text-xl font-black text-red-400">28 jobs/$B</div>
+          {/* ── Section 4: Power Infrastructure ── */}
+          <section>
+            <SH n="04 · Power Infrastructure" title="Megawatt Capacity by State & Market"
+              sub="MW is the real unit of data center investment. Texas is on track to become the largest US market by committed megawatts — driven by Stargate (1,200MW), Vantage Frontier (1,400MW), and Meta's El Paso and Fort Worth campuses." />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <div className="lc-card lc-card-blue p-5 lg:col-span-2">
+                <div className="text-xs font-bold text-slate-500 mb-3">Committed MW by State (All Stages)</div>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={[...MW_BY_STATE].sort((a, b) => b.mw - a.mw)} layout="vertical" margin={{ left: 8, right: 60, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                      <XAxis type="number" tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v.toLocaleString()}MW`} />
+                      <YAxis type="category" dataKey="state" width={34} tick={{ fontSize: 12, fill: "#475569", fontWeight: 700 }} />
+                      <Tooltip content={<ChartTip fmt={(v) => `${Number(v).toLocaleString()} MW`} />} />
+                      <Bar dataKey="mw" name="Capacity" radius={[0, 4, 4, 0]}>
+                        {[...MW_BY_STATE].sort((a, b) => b.mw - a.mw).map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-                <div>
-                  <div className="sys-label">Auto Plant</div>
-                  <div className="mono-num text-xl font-black text-amber-400">950 jobs/$B</div>
-                </div>
-                <div>
-                  <div className="sys-label">Ratio</div>
-                  <div className="mono-num text-xl font-black text-slate-300">34×</div>
+                <div className="mt-3 flex gap-4">
+                  {[{ color: "#22c55e", l: "Operational" }, { color: "#f59e0b", l: "Under Construction" }, { color: "#94a3b8", l: "Planned" }].map((l) => (
+                    <div key={l.l} className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-sm" style={{ background: l.color }} />
+                      <span className="text-xs text-slate-500">{l.l}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-
-            {/* Fiscal benefit ratios */}
-            <div className="dc-card dc-card-green p-4 sm:p-5">
-              <div className="sys-label mb-1">Fiscal Benefit Ratio — Tax Revenue vs. Services Consumed</div>
-              <p className="text-xs text-slate-600 mb-4">Dollars of property tax generated per dollar of public services consumed. Break-even = 1:1. Residential housing = 0.8:1. Data centers: off the chart.</p>
-              <div className="h-[240px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={FISCAL_BENEFIT_RATIOS} layout="vertical" margin={{ left: 10, right: 60, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} tickFormatter={(v) => `${v}:1`} />
-                    <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#94a3b8" }} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`${v}:1`, "Fiscal Ratio"]} />
-                    <ReferenceLine x={1} stroke="#ef4444" strokeDasharray="4 4" label={{ value: "Break-even", position: "insideTopRight", fontSize: 9, fill: "#ef4444" }} />
-                    <Bar dataKey="ratio" name="Fiscal Ratio" radius={[0, 3, 3, 0]}>
-                      {FISCAL_BENEFIT_RATIOS.map((e, i) => <Cell key={i} fill={e.color} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 dc-card p-3 mono-num text-center">
-                <div className="sys-label">Loudoun County, VA</div>
-                <div className="text-2xl font-black" style={{ color: "#22c55e" }}>38%</div>
-                <div className="sys-label mt-1">of county general fund from 3% of county land</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Evidence cards */}
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {[
-              { label: "Virginia Statewide", val: "74,000 Jobs", sub: "$9.1B GDP · $1.64B local taxes/yr · 1:3.5 multiplier", color: "#22c55e" },
-              { label: "Arizona", val: "$25B GDP", sub: "$863M combined annual tax revenue (2023 data)", color: "#f59e0b" },
-              { label: "Brookings 2026", val: "+22% Info Sector", sub: "+4–5% private employment in host counties vs controls", color: "#06b6d4" },
-              { label: "Project Steamboat, GA", val: "1,666×", sub: "$12K/yr parcel → $200M in 10-yr property tax", color: "#a78bfa" },
-            ].map((c) => (
-              <div key={c.label} className="dc-card p-4" style={{ borderTop: `2px solid ${c.color}` }}>
-                <div className="sys-label mb-1">{c.label}</div>
-                <div className="mono-num text-xl font-black" style={{ color: c.color }}>{c.val}</div>
-                <div className="text-xs text-slate-500 mt-1 leading-tight">{c.sub}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ ENERGY / GRID ═══ */}
-        <section>
-          <SysHeader label="Section 07 · Grid Stress" title="Energy Demand & Power Costs" sub="Data centers are responsible for 60% of all US electrical load growth through 2030. The grid was not designed for this pace of demand. The cost is being socialized to residential ratepayers who never voted on it." />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="dc-card dc-card-amber p-4 sm:p-5">
-              <div className="sys-label mb-4">DC Share of US Electricity (%)</div>
-              <div className="h-[220px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={DC_ELECTRICITY_SHARE} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
-                    <defs>
-                      <linearGradient id="elecGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.02} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" />
-                    <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} />
-                    <YAxis tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} tickFormatter={(v) => `${v}%`} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`${v}%`, "DC Share"]} />
-                    <Area type="monotone" dataKey="share" name="DC Share" stroke="#f59e0b" fill="url(#elecGrad)" strokeWidth={2} dot={{ fill: "#f59e0b", r: 4 }} />
-                  </AreaChart>
-                </ResponsiveContainer>
+              <div className="space-y-5">
+                {/* Metro markets */}
+                <div className="lc-card lc-card-amber p-5">
+                  <div className="text-xs font-bold text-slate-500 mb-3">Top Metro Markets — Operational MW</div>
+                  <div className="space-y-2">
+                    {METRO_MARKETS.map((m, i) => (
+                      <div key={m.metro}>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-xs font-semibold text-slate-700">{m.metro}</span>
+                          <span className="mono text-xs font-bold text-slate-900">{m.mw.toLocaleString()} MW</span>
+                        </div>
+                        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${(m.mw / METRO_MARKETS[0].mw) * 100}%`,
+                              background: i === 0 ? "#f59e0b" : i === 1 ? "#ef4444" : i === 2 ? "#3b82f6" : i === 3 ? "#22c55e" : "#8b5cf6"
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    <div className="text-xs text-slate-400 mt-2 pt-2 border-t border-slate-100">Source: NVTC, JLL, CBRE 2026 market reports</div>
+                  </div>
+                </div>
+                {/* Regional pipeline split */}
+                <div className="lc-card lc-card-green p-5">
+                  <div className="text-xs font-bold text-slate-500 mb-3">Regional Share of 2026 Pipeline Spending</div>
+                  <div className="h-[150px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={REGIONAL_PIPELINE} cx="50%" cy="50%" innerRadius={40} outerRadius={65} dataKey="pct" nameKey="region">
+                          {REGIONAL_PIPELINE.map((e, i) => <Cell key={i} fill={e.color} />)}
+                        </Pie>
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (!active || !payload?.length) return null;
+                            const d = payload[0].payload as typeof REGIONAL_PIPELINE[0];
+                            return (
+                              <div className="rounded-lg shadow-lg border text-sm" style={{ background: "#fff", borderColor: "#e2e8f0", padding: "8px 12px" }}>
+                                <div style={{ color: d.color }} className="font-bold">{d.region}: {d.pct}%</div>
+                              </div>
+                            );
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 mt-1">
+                    {REGIONAL_PIPELINE.map((r) => (
+                      <div key={r.region} className="flex items-center gap-1.5">
+                        <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: r.color }} />
+                        <span className="text-xs text-slate-600">{r.region}: <strong>{r.pct}%</strong></span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-xs text-slate-400 mt-2 pt-2 border-t border-slate-100">Source: ConstructConnect, June 2026</div>
+                </div>
               </div>
             </div>
+          </section>
 
-            <div className="dc-card dc-card-red p-4 sm:p-5">
-              <div className="sys-label mb-4">US Avg Electricity Price (¢/kWh)</div>
-              <div className="h-[220px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={ELECTRICITY_PRICE_DATA} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" />
-                    <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} />
-                    <YAxis tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} tickFormatter={(v) => `${v}¢`} domain={[10, 30]} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`${v}¢/kWh`, "Avg Price"]} />
-                    <Line type="monotone" dataKey="cents" name="Price (¢/kWh)" stroke="#ef4444" strokeWidth={2} dot={{ fill: "#ef4444", r: 4 }} />
-                  </LineChart>
-                </ResponsiveContainer>
+          {/* ── Section 5: State Leaderboard ── */}
+          <section>
+            <SH n="05 · State Rankings" title="State Leaderboard"
+              sub="Virginia leads in operational facility count and economic maturity. Texas leads in planned MW. Arizona has the highest documented GDP return ($25B) from a smaller base." />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div className="lc-card lc-card-amber p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">Operational Facilities (Top 10 States)</div>
+                <div className="h-[280px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={[...STATES_DATA].filter(s => s.operational > 0).sort((a, b) => b.operational - a.operational).slice(0, 10)}
+                      margin={{ left: 0, right: 20, top: 5, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                      <XAxis dataKey="state" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <Tooltip content={<ChartTip fmt={(v, n) => `${v} ${n === "Operational" ? "facilities" : "pipeline"}`} />} />
+                      <Bar dataKey="operational" name="Operational" stackId="a">
+                        {[...STATES_DATA].filter(s => s.operational > 0).sort((a, b) => b.operational - a.operational).slice(0, 10).map((_, i) => (
+                          <Cell key={i} fill={i === 0 ? "#f59e0b" : i === 1 ? "#d97706" : "#fbbf24"} />
+                        ))}
+                      </Bar>
+                      <Bar dataKey="pipeline" name="Pipeline" stackId="a" fill="#e2e8f0" radius={[3, 3, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              <div className="lc-card overflow-hidden">
+                <div className="overflow-x-auto scrollbar-thin">
+                  <table className="lt-table min-w-[400px]">
+                    <thead>
+                      <tr>
+                        <th className="text-left">State</th>
+                        <th className="text-right">Op.</th>
+                        <th className="text-right">Pipeline</th>
+                        <th className="text-right">GDP</th>
+                        <th className="text-right">Jobs</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {displayedStates.map((s, i) => (
+                        <tr key={i}>
+                          <td>
+                            <div className="font-bold text-slate-900 mono">{s.state}</div>
+                            <div className="text-slate-400" style={{ fontSize: 10 }}>{s.state_name}</div>
+                          </td>
+                          <td className="text-right mono font-bold text-amber-600">{s.operational || "—"}</td>
+                          <td className="text-right mono text-slate-500">{s.pipeline || "—"}</td>
+                          <td className="text-right mono font-semibold text-green-600" style={{ fontSize: 11 }}>
+                            {s.gdpB ? `$${s.gdpB}B` : "—"}
+                          </td>
+                          <td className="text-right mono text-slate-600" style={{ fontSize: 11 }}>
+                            {s.jobs ? s.jobs.toLocaleString() : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <button
+                  onClick={() => setStatesExpanded(!statesExpanded)}
+                  className="w-full py-2.5 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1 text-amber-700 bg-amber-50 hover:bg-amber-100 border-t border-slate-200 transition-colors"
+                >
+                  {statesExpanded ? <><ChevronUp size={12} /> Show Less</> : <><ChevronDown size={12} /> All {STATES_DATA.length} States</>}
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Section 6: The Jobs Math ── */}
+          <section>
+            <SH n="06 · Economic Analysis" title="The Jobs Math & Fiscal Returns"
+              sub="Data centers create the fewest permanent jobs per dollar invested of any major US industry — but generate the highest fiscal returns per acre of any land use. Both facts are true simultaneously." />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div className="lc-card lc-card-red p-5">
+                <div className="text-xs font-bold text-slate-500 mb-1">Permanent Jobs per $1B Invested — Industry Comparison</div>
+                <p className="text-xs text-slate-400 mb-4">An auto plant creates 34× more permanent jobs per billion dollars invested than a data center. The employment bet is almost entirely on the construction phase.</p>
+                <div className="h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={JOBS_PER_BILLION} layout="vertical" margin={{ left: 8, right: 60, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                      <XAxis type="number" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis type="category" dataKey="industry" width={120} tick={{ fontSize: 10, fill: "#475569" }} />
+                      <Tooltip content={<ChartTip fmt={(v) => `${v} jobs per $1B`} />} />
+                      <Bar dataKey="jobs" name="Jobs per $1B" radius={[0, 4, 4, 0]}>
+                        {JOBS_PER_BILLION.map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-2">
+                  {[
+                    { l: "Data Centers", v: "28 jobs/$B", c: "#ef4444" },
+                    { l: "Auto Plant", v: "950 jobs/$B", c: "#f59e0b" },
+                    { l: "Multiplier", v: "34×", c: "#334155" },
+                  ].map((x) => (
+                    <div key={x.l} className="bg-slate-50 rounded-lg p-3 text-center">
+                      <div className="mono font-black text-lg" style={{ color: x.c }}>{x.v}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">{x.l}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="lc-card lc-card-green p-5">
+                <div className="text-xs font-bold text-slate-500 mb-1">Fiscal Benefit Ratio — Tax Revenue vs. Services Consumed</div>
+                <p className="text-xs text-slate-400 mb-4">Dollars of property tax generated for every dollar of public services (schools, roads, emergency) consumed. Break-even = 1:1. Residential housing actually loses money for local governments at 0.8:1.</p>
+                <div className="h-[240px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={FISCAL_BENEFIT_RATIOS} layout="vertical" margin={{ left: 8, right: 55, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                      <XAxis type="number" tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}:1`} />
+                      <YAxis type="category" dataKey="name" width={145} tick={{ fontSize: 10, fill: "#475569" }} />
+                      <Tooltip content={<ChartTip fmt={(v) => `${v}:1 ratio`} />} />
+                      <ReferenceLine x={1} stroke="#ef4444" strokeDasharray="4 4" label={{ value: "Break-even", position: "insideTopRight", fontSize: 9, fill: "#ef4444" }} />
+                      <Bar dataKey="ratio" name="Fiscal Ratio" radius={[0, 4, 4, 0]}>
+                        {FISCAL_BENEFIT_RATIOS.map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
 
-            {/* Ratepayer YoY */}
-            <div className="dc-card dc-card-red p-4 sm:p-5">
-              <div className="sys-label mb-2">Residential Bill Increase YoY — DC-Heavy States</div>
-              <div className="h-[160px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={RATEPAYER_STATE_YOY} margin={{ left: 0, right: 10, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                    <XAxis dataKey="state" tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} />
-                    <YAxis tick={{ fontSize: 11, fill: "#64748b", fontFamily: "monospace" }} tickFormatter={(v) => `${v}%`} />
-                    <Tooltip content={<DarkTooltip />} formatter={(v) => [`+${v}%`, "YoY Increase"]} />
-                    <Bar dataKey="pct" name="YoY %" radius={[3, 3, 0, 0]}>
-                      {RATEPAYER_STATE_YOY.map((e, i) => <Cell key={i} fill={e.state === "US Avg" ? "#475569" : "#ef4444"} />)}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-3 space-y-2">
+            {/* Evidence chips */}
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <EvidenceChip title="Virginia Statewide" val="74,000 Jobs" sub="$9.1B GDP · $1.64B local taxes/yr · 1:3.5 employment multiplier" color="#22c55e" />
+              <EvidenceChip title="Arizona" val="$25B GDP" sub="$863M combined annual tax revenue from data centers (2023)" color="#f59e0b" />
+              <EvidenceChip title="Brookings 2026 (Peer-Reviewed)" val="+22% Info Sector" sub="+4–5% private employment in host counties vs 3,000 control counties" color="#3b82f6" />
+              <EvidenceChip title="Project Steamboat, GA" val="1,666×" sub="$12K/yr idle parcel → $200M over 10 years in property tax" color="#8b5cf6" />
+            </div>
+
+            {/* Workforce benchmarks */}
+            <div className="mt-5 lc-card lc-card-amber p-5">
+              <div className="text-xs font-bold text-slate-500 mb-4">Construction Workforce Math — The Real Employment Story</div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
-                  { label: "Ratepayer burden (7 states)", val: "$4.3B", color: "#ef4444" },
-                  { label: "Ohio households by 2028", val: "+$70/mo", color: "#ef4444" },
-                  { label: "PJM auction YoY jump", val: "+568%", color: "#ef4444" },
-                  { label: "Virginia 5-yr price rise", val: "+267%", color: "#f59e0b" },
-                ].map((item) => (
-                  <div key={item.label} className="flex justify-between items-center">
-                    <span className="sys-label">{item.label}</span>
-                    <span className="mono-num text-sm font-black" style={{ color: item.color }}>{item.val}</span>
+                  { label: "Workers per 100MW (Construction)", val: "850", sub: "Hamm Institute 2025", color: "#f59e0b" },
+                  { label: "Avg Annual Construction Comp", val: "$140K", sub: "$70/hr including benefits", color: "#f59e0b" },
+                  { label: "Typical Build Duration", val: "18–36mo", sub: "Per phase, per building", color: "#475569" },
+                  { label: "Cumulative Construction Jobs Through 2030", val: "4.7M", sub: "Across all planned projects", color: "#22c55e" },
+                  { label: "Perm. Operations Jobs by 2030", val: "697K", sub: "Projected industry-wide", color: "#3b82f6" },
+                  { label: "Maryland SAGE: 800K sqft DC", val: "$775M", sub: "Local economic activity during construction phase alone", color: "#8b5cf6" },
+                ].map((x) => (
+                  <div key={x.label} className="text-center">
+                    <div className="mono text-xl sm:text-2xl font-black" style={{ color: x.color }}>{x.val}</div>
+                    <div className="text-xs font-semibold text-slate-700 mt-1 leading-tight">{x.label}</div>
+                    <div className="text-xs text-slate-400 mt-0.5">{x.sub}</div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Grid stats row */}
-          <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { label: "Share of US Load Growth by 2030", value: "60%", color: "#f59e0b", icon: Zap },
-              { label: "Daily DC Water Use (2021)", value: "449M gal", color: "#06b6d4", icon: Droplets },
-              { label: "Projected 2028 Annual Water", value: "32B gal", color: "#06b6d4", icon: ThermometerSun },
-              { label: "Projects Blocked by Community", value: "$64B+", color: "#ef4444", icon: AlertTriangle },
-            ].map((item) => (
-              <div key={item.label} className="dc-card p-4" style={{ borderTop: `2px solid ${item.color}` }}>
-                <item.icon size={16} color={item.color} className="mb-2" />
-                <div className="mono-num text-xl sm:text-2xl font-black" style={{ color: item.color }}>{item.value}</div>
-                <div className="sys-label mt-1">{item.label}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ REGULATORY RESPONSES ═══ */}
-        <section>
-          <SysHeader label="Section 08 · Regulatory Pushback" title="States Strike Back" sub="Where regulators have acted, residential bill impacts are being mitigated. Where they haven't, ratepayers subsidize hyperscaler grid connections." />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[
-              {
-                state: "Virginia — GS5 Rate Class",
-                date: "Nov 2025 · Effective Jan 2027",
-                rule: "DCs ≥25MW must pay min 85% of distribution/transmission + 60% of generation costs.",
-                impact: "Est. residential savings: $5.52/mo",
-                color: "#22c55e",
-              },
-              {
-                state: "Ohio — 85% Min-Pay Rule",
-                date: "Approved 2025",
-                rule: "DCs must pay 85% of contracted electricity capacity even when unused.",
-                impact: "DC demand dropped from 30GW → 13GW overnight",
-                color: "#22c55e",
-              },
-              {
-                state: "Mississippi — Cost Recovery",
-                date: "Special Legislation",
-                rule: "AWS must cover all incremental power infrastructure costs. No ratepayer pass-through.",
-                impact: "Entergy: $300M grid upgrade, zero cost to customers",
-                color: "#22c55e",
-              },
-            ].map((r) => (
-              <div key={r.state} className="dc-card dc-card-green p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="led-green" />
-                  <span className="mono-num text-xs font-bold text-green-400">{r.state}</span>
+          {/* ── Section 7: Energy & Grid ── */}
+          <section>
+            <SH n="07 · Grid Stress" title="Energy Demand & Power Costs"
+              sub="Data centers are responsible for 60% of all US electrical load growth through 2030. A single 1GW facility draws the equivalent of 800,000 homes. The grid — and residential ratepayers — were not designed for this pace." />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <div className="lc-card lc-card-blue p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">DC Share of US Electricity</div>
+                <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={DC_ELECTRICITY_SHARE} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
+                      <defs>
+                        <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.02} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}%`} />
+                      <Tooltip content={<ChartTip fmt={(v) => `${v}% of US electricity`} />} />
+                      <Area type="monotone" dataKey="share" name="DC Share" stroke="#3b82f6" fill="url(#eg)" strokeWidth={2.5} dot={{ fill: "#3b82f6", r: 4, strokeWidth: 0 }} />
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
-                <div className="sys-label mb-2">{r.date}</div>
-                <div className="text-xs text-slate-400 leading-relaxed mb-2">{r.rule}</div>
-                <div className="text-xs font-bold text-green-400 mono-num">{r.impact}</div>
               </div>
-            ))}
-          </div>
-
-          {/* Governance red flags */}
-          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {[
-              { label: "VA Municipalities w/ NDAs", val: "80%", sub: "Block public project information", color: "#f59e0b" },
-              { label: "Abilene Tax Abatement", val: "85%", sub: "10-year property tax, min 400 jobs", color: "#f59e0b" },
-              { label: "Blocked by Communities", val: "$64B+", sub: "Water / energy / noise opposition", color: "#ef4444" },
-              { label: "OH Standard Abatement", val: "75–100%", sub: "15-yr exemption for $100M+ projects", color: "#f59e0b" },
-              { label: "xAI Memphis Colossus", val: "⚠ EJ", sub: "Gas turbines near Black communities", color: "#ef4444" },
-            ].map((item) => (
-              <div key={item.label} className="dc-card p-3">
-                <div className="sys-label mb-1">{item.label}</div>
-                <div className="mono-num text-lg font-black" style={{ color: item.color }}>{item.val}</div>
-                <div className="text-slate-600 mt-1" style={{ fontSize: 10 }}>{item.sub}</div>
+              <div className="lc-card lc-card-red p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">US Avg Electricity Price (¢/kWh)</div>
+                <div className="h-[220px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={ELECTRICITY_PRICE_DATA} margin={{ left: 0, right: 10, top: 10, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis dataKey="year" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}¢`} domain={[10, 30]} />
+                      <Tooltip content={<ChartTip fmt={(v) => `${v}¢ per kWh`} />} />
+                      <Line type="monotone" dataKey="cents" name="Price" stroke="#ef4444" strokeWidth={2.5} dot={{ fill: "#ef4444", r: 4, strokeWidth: 0 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ═══ HOST COUNTIES ═══ */}
-        <section>
-          <SysHeader label="Section 09 · Community Impact" title="Host County Profiles" sub="The counties receiving the biggest investments are often the ones with the fewest economic alternatives. The counterfactual matters." />
-          <div className="dc-card overflow-hidden">
-            <div className="overflow-x-auto scrollbar-dark">
-              <table className="dc-table w-full min-w-[700px]">
-                <thead>
-                  <tr>
-                    <th className="text-left">County</th>
-                    <th className="text-left">Anchor Project</th>
-                    <th className="text-right">Investment</th>
-                    <th className="text-right">Per Capita Income</th>
-                    <th className="text-right">Poverty Rate</th>
-                    <th className="text-right">Child Poverty</th>
-                    <th className="text-right">Pop. Trend</th>
-                    <th className="text-center">Verdict</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {HOST_COUNTIES.map((c, i) => (
-                    <tr key={i}>
-                      <td className="font-bold text-slate-200">{c.county}</td>
-                      <td className="text-slate-400">{c.anchor}</td>
-                      <td className="text-right mono-num font-bold text-amber-400">{c.investment}</td>
-                      <td className="text-right mono-num text-slate-400">{c.perCapitaIncome}</td>
-                      <td className="text-right mono-num font-bold text-red-400">{c.povertyRate}</td>
-                      <td className="text-right mono-num font-bold text-red-500">{c.childPoverty}</td>
-                      <td className="text-right mono-num text-slate-500">{c.popChange}</td>
-                      <td className="text-center">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded mono-num ${
-                          c.verdict === "Transformative" ? "text-green-400 bg-green-900/30 border border-green-800" :
-                          c.verdict === "Positive" ? "text-cyan-400 bg-cyan-900/30 border border-cyan-800" :
-                          "text-amber-400 bg-amber-900/30 border border-amber-800"
-                        }`}>{c.verdict}</span>
-                      </td>
-                    </tr>
+              <div className="lc-card lc-card-red p-5">
+                <div className="text-xs font-bold text-slate-500 mb-3">Residential Bill Increase YoY — DC-Heavy States</div>
+                <div className="h-[160px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={RATEPAYER_STATE_YOY} margin={{ left: 0, right: 10, top: 5, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                      <XAxis dataKey="state" tick={{ fontSize: 11, fill: "#94a3b8" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} tickFormatter={(v) => `${v}%`} />
+                      <Tooltip content={<ChartTip fmt={(v) => `+${v}% YoY`} />} />
+                      <Bar dataKey="pct" name="YoY Increase" radius={[4, 4, 0, 0]}>
+                        {RATEPAYER_STATE_YOY.map((e, i) => <Cell key={i} fill={e.state === "US Avg" ? "#cbd5e1" : "#ef4444"} />)}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-3 space-y-2">
+                  {[
+                    { l: "Ratepayer burden (7 states)", v: "$4.3B", c: "#ef4444" },
+                    { l: "OH households +/mo by 2028", v: "+$70", c: "#ef4444" },
+                    { l: "PJM capacity auction jump (YoY)", v: "+568%", c: "#ef4444" },
+                    { l: "Virginia 5-yr price increase", v: "+267%", c: "#f59e0b" },
+                  ].map((x) => (
+                    <div key={x.l} className="flex justify-between items-center">
+                      <span className="text-xs text-slate-500">{x.l}</span>
+                      <span className="mono text-sm font-black" style={{ color: x.c }}>{x.v}</span>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="mt-4 dc-card p-4 sm:p-5" style={{ borderLeft: "3px solid #f59e0b" }}>
-            <div className="sys-label mb-2">Richland Parish, Louisiana — The Defining Case</div>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Meta&apos;s $27B Hyperion campus lands in a parish where <span className="text-red-400 font-bold">37% of children live in poverty</span>, per capita income
-              is <span className="text-amber-400 font-bold mono-num">$42,298</span>, and the population has shrunk <span className="text-red-400 font-bold">6% since 2010</span>.
-              Meta wages run <span className="text-green-400 font-bold">150% above state average</span> (~$80K vs $42K). Parish receives
-              <span className="text-amber-400 font-bold"> $300M</span> in direct infrastructure investment. The counterfactual
-              isn&apos;t a better industrial project — it&apos;s continued agricultural decline and school funding cuts.
-            </p>
-          </div>
-        </section>
-
-        {/* ═══ NET VERDICT ═══ */}
-        <section>
-          <SysHeader label="Section 10 · Net Assessment" title="The Verdict" sub="Is hosting a data center net positive for a rural US community? The evidence is conditional — but leans strongly positive, provided the community doesn't give away the fiscal store." />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="dc-card dc-card-green p-4 sm:p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <TrendingUp size={16} color="#22c55e" />
-                <div className="sys-label text-green-500">Net Positive Evidence</div>
+                </div>
               </div>
-              <ul className="space-y-2">
-                {[
-                  "Loudoun Co: 38% of general fund on 3% of land (26:1 fiscal ratio)",
-                  "Virginia statewide: 74K jobs, $9.1B GDP, $1.64B local taxes, 1:3.5 multiplier",
-                  "Arizona: $25B GDP, $863M combined annual tax revenue",
-                  "Brookings (peer-reviewed): +4–5% private employment, +22% information sector",
-                  "Richland Parish: $27B vs $42K per capita income / 24% poverty / -6% pop",
-                  "Project Steamboat: $12K/yr idle parcel → $200M in 10-year property tax",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                    <span className="text-green-400 font-bold mt-0.5 shrink-0 mono-num">✓</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
             </div>
-            <div className="dc-card dc-card-red p-4 sm:p-5">
-              <div className="flex items-center gap-2 mb-4">
-                <AlertTriangle size={16} color="#ef4444" />
-                <div className="sys-label text-red-500">Risk Factors</div>
-              </div>
-              <ul className="space-y-2">
-                {[
-                  "Permanent jobs: 50–500 per facility — tiny relative to capex",
-                  "Capex per permanent job: $18M–$54M — highest of any US industry",
-                  "$4.3B ratepayer burden in 7 states — costs socialized, benefit private",
-                  "Communities sometimes absorb grid/water costs with no tax yield",
-                  "80% of VA municipalities operate under NDAs blocking accountability",
-                  "xAI Memphis: gas turbines adjacent to Black communities — canonical EJ failure",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
-                    <span className="text-red-400 font-bold mt-0.5 shrink-0 mono-num">⚠</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
 
-          <div className="mt-4 dc-card p-5 sm:p-7" style={{ borderLeft: "4px solid #f59e0b", background: "#141414" }}>
-            <div className="sys-label text-amber-600 mb-3">THESIS STATEMENT</div>
-            <blockquote className="text-sm sm:text-base font-bold leading-relaxed text-slate-200 mono-num">
-              &ldquo;Data centers are the highest-yielding land-conversion event in modern American local fiscal history —
-              for counties that would otherwise have no anchor industrial investment. The criticism has legitimate teeth
-              on (1) ratepayer cost-shifting where regulators haven&apos;t acted and (2) environmental siting failures.
-              But the alternative for most host counties is not a better industrial project — it&apos;s nothing.&rdquo;
-            </blockquote>
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t pt-5" style={{ borderColor: "#2a2a2a" }}>
+            {/* Energy metrics row */}
+            <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
-                {
-                  label: "// NET_POSITIVE_WHEN",
-                  color: "#22c55e",
-                  items: ["Fair tax structure (not 100% abated)", "Utility regulator blocks ratepayer cost-shift", "Water/environmental constraints respected"],
-                },
-                {
-                  label: "// NET_NEGATIVE_WHEN",
-                  color: "#ef4444",
-                  items: ["Full abatement + grid costs socialized", "Sited without EJ or water impact analysis", "NDA blocks community oversight entirely"],
-                },
-                {
-                  label: "// FALSIFIABLE_IF",
-                  color: "#94a3b8",
-                  items: ["Peer-reviewed studies show net fiscal loss post-abatement", "Brookings shows population decline increasing vs controls", "Ratepayer burden becomes pervasive + unmitigated"],
-                },
-              ].map((col) => (
-                <div key={col.label}>
-                  <div className="mono-num text-xs font-bold mb-2" style={{ color: col.color }}>{col.label}</div>
-                  <ul className="space-y-1">
-                    {col.items.map((item, i) => (
-                      <li key={i} className="text-xs text-slate-500 flex items-start gap-1.5">
-                        <span className="shrink-0 mt-0.5" style={{ color: "#2a2a2a" }}>→</span>{item}
-                      </li>
-                    ))}
-                  </ul>
+                { l: "Share of US Load Growth by 2030", v: "60%", c: "#3b82f6", icon: Zap },
+                { l: "1GW Facility = Household Equivalent", v: "800K", c: "#f59e0b", icon: Building2 },
+                { l: "DC Daily Water Consumption (2021)", v: "449M gal", c: "#06b6d4", icon: Droplets },
+                { l: "Farmland DCs Converted (AFBF)", v: "4,925", c: "#ef4444", icon: Leaf },
+              ].map((x) => (
+                <div key={x.l} className="lc-card p-4 hover:shadow-md transition-shadow" style={{ borderTop: `3px solid ${x.c}` }}>
+                  <x.icon size={16} style={{ color: x.c }} className="mb-2" />
+                  <div className="mono text-2xl font-black" style={{ color: x.c }}>{x.v}</div>
+                  <div className="text-xs text-slate-500 mt-1 leading-tight">{x.l}</div>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* ═══ DATA NOTE ═══ */}
-        <section>
-          <div className="dc-card p-4 sm:p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Server size={13} color="#475569" />
-              <span className="sys-label">Data Sources & Methodology</span>
+          {/* ── Section 8: Nuclear ── */}
+          <section>
+            <SH n="08 · Clean Energy Pivot" title="Nuclear-DC Pairings"
+              sub="Hyperscalers are increasingly co-locating with or contracting nuclear plants to meet 24/7 carbon-free energy commitments. This is reshaping the US nuclear industry — including restarting plants that had already been shut down." />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {NUCLEAR_DC_PAIRINGS.map((n) => (
+                <div key={n.operator} className="lc-card p-4 hover:shadow-md transition-shadow" style={{ borderTop: `3px solid ${n.color}` }}>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <Atom size={16} style={{ color: n.color }} className="shrink-0 mt-0.5" />
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded mono ${
+                      n.status === "Done" ? "bg-green-50 text-green-700" :
+                      n.status === "Signed" ? "bg-blue-50 text-blue-700" :
+                      n.status === "Active" ? "bg-amber-50 text-amber-700" : "bg-slate-100 text-slate-600"
+                    }`}>{n.status}</span>
+                  </div>
+                  <div className="font-bold text-slate-900 text-sm mb-1">{n.operator}</div>
+                  <div className="text-xs font-semibold text-slate-600 mb-2">{n.facility}</div>
+                  <div className="text-xs text-slate-500 leading-relaxed">{n.deal}</div>
+                  {n.mw && <div className="mono text-sm font-black mt-3" style={{ color: n.color }}>{n.mw.toLocaleString()} MW</div>}
+                </div>
+              ))}
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              All figures are based on publicly disclosed announcements, state economic development filings, company press releases,
-              JLARC 2024, Brookings 2026, UCS 2024, and local municipal records as of June 2026. Many projects have not yet disclosed
-              final MW capacity, water agreements, or full employment commitments. The largest research gaps include Digital Realty,
-              Equinix, CyrusOne, Aligned, Switch, Compass, CloudHQ, STACK, Iron Mountain, and numerous secondary hyperscaler campuses.
-              Total identified capex: ~$290B+ (directly identified, publicly disclosed). Hyperscaler 2026 CapEx figures represent global programs with significant US concentration.
-            </p>
-          </div>
-        </section>
+          </section>
+
+          {/* ── Section 9: Gas Buildouts ── */}
+          <section>
+            <SH n="09 · Hidden Infrastructure" title="Gas Plant Buildouts Behind the Meter"
+              sub="Before nuclear and renewables come online, data centers are triggering massive gas plant construction — some directly onsite, others contracted through utilities. This infrastructure won't be dismantled when cleaner power arrives." />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {GAS_PLANT_BUILDOUTS.map((g) => (
+                <div key={g.operator} className="lc-card lc-card-red p-5 hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-2 mb-3">
+                    <HardDrive size={15} className="text-red-500 shrink-0" />
+                    <div className="text-xs font-bold text-slate-700 leading-tight">{g.operator}</div>
+                  </div>
+                  <div className="bg-slate-50 rounded-lg px-3 py-2 mb-3">
+                    <div className="text-xs text-slate-500 font-medium">{g.type}</div>
+                  </div>
+                  <div className="space-y-1.5">
+                    {g.newMW && <div className="flex justify-between"><span className="text-xs text-slate-500">New generation capacity</span><span className="mono text-xs font-bold text-red-600">{g.newMW.toLocaleString()} MW</span></div>}
+                    {g.transmissionMiles && <div className="flex justify-between"><span className="text-xs text-slate-500">New transmission lines</span><span className="mono text-xs font-bold text-slate-700">{g.transmissionMiles} miles</span></div>}
+                    {g.substations && <div className="flex justify-between"><span className="text-xs text-slate-500">New substations</span><span className="mono text-xs font-bold text-slate-700">{g.substations}</span></div>}
+                  </div>
+                  <div className="mt-3 bg-red-50 border border-red-100 rounded-lg p-2.5">
+                    <div className="text-xs text-red-700 leading-snug">{g.concern}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Section 10: Regulatory Pushback ── */}
+          <section>
+            <SH n="10 · Regulatory Responses" title="States Strike Back"
+              sub="Where regulators have acted, residential bill impacts are being mitigated. Where they haven't, ratepayers subsidize the grid buildout for hyperscaler connections — a subsidy that never appears in economic impact reports." />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+              {[
+                { state: "Virginia", rule: "GS5 Rate Class", date: "Approved Nov 2025 · Effective Jan 2027", detail: "DCs ≥25MW must pay min 85% of distribution/transmission costs + 60% of generation. Estimated residential savings: $5.52/mo.", impact: "~$5.52/mo residential savings", color: "#22c55e" },
+                { state: "Ohio", rule: "85% Min-Pay Rule", date: "Approved 2025", detail: "DCs must pay 85% of contracted electricity capacity even when unused. Prevents shifting idle-capacity costs to residential ratepayers.", impact: "Demand dropped 30GW → 13GW immediately", color: "#22c55e" },
+                { state: "Mississippi", rule: "Cost Recovery Legislation", date: "Special legislation", detail: "AWS must cover all incremental power infrastructure costs. Entergy: $300M grid upgrade, 50% outage reduction. Zero cost to residential customers.", impact: "Entergy: $300M grid upgrade at no customer cost", color: "#22c55e" },
+              ].map((r) => (
+                <div key={r.state} className="lc-card lc-card-green p-5 hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="led-green" />
+                    <div>
+                      <div className="font-bold text-slate-900 text-sm">{r.state} — {r.rule}</div>
+                      <div className="text-xs text-slate-400">{r.date}</div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-slate-600 leading-relaxed mb-3">{r.detail}</div>
+                  <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                    <div className="text-xs font-bold text-green-700">{r.impact}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Governance red flags */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              {[
+                { l: "VA Municipalities with NDAs", v: "80%", sub: "Block public access to project details", c: "#f59e0b" },
+                { l: "Stargate Abilene Tax Abatement", v: "85%", sub: "10-year property tax exemption", c: "#f59e0b" },
+                { l: "Community-Blocked Projects", v: "$64B+", sub: "Water / energy / noise opposition", c: "#ef4444" },
+                { l: "Ohio Standard Abatement", v: "75–100%", sub: "15-yr exemption, $100M+ projects", c: "#f59e0b" },
+                { l: "xAI Memphis (Colossus)", v: "⚠ EJ Case", sub: "Gas turbines near Black communities", c: "#ef4444" },
+              ].map((x) => (
+                <div key={x.l} className="lc-card p-3 hover:shadow-md transition-shadow">
+                  <div className="text-xs font-semibold text-slate-600 mb-1">{x.l}</div>
+                  <div className="mono text-lg font-black" style={{ color: x.c }}>{x.v}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{x.sub}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Section 11: Host Counties ── */}
+          <section>
+            <SH n="11 · Community Impact" title="Host County Profiles"
+              sub="The counties receiving the biggest investments are often the ones with the fewest economic alternatives. Understanding who they are — and what the realistic alternative was — is essential to evaluating the net impact." />
+            <div className="lc-card overflow-hidden">
+              <div className="overflow-x-auto scrollbar-thin">
+                <table className="lt-table min-w-[720px]">
+                  <thead>
+                    <tr>
+                      <th className="text-left">County</th>
+                      <th className="text-left">Anchor Project</th>
+                      <th className="text-right">Investment</th>
+                      <th className="text-right">Per Capita Income</th>
+                      <th className="text-right">Poverty Rate</th>
+                      <th className="text-right">Child Poverty</th>
+                      <th className="text-right">Pop. Trend</th>
+                      <th className="text-center">Verdict</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {HOST_COUNTIES.map((c, i) => (
+                      <tr key={i}>
+                        <td className="font-semibold text-slate-900">{c.county}</td>
+                        <td className="text-slate-600">{c.anchor}</td>
+                        <td className="text-right mono font-bold text-slate-900">{c.investment}</td>
+                        <td className="text-right mono text-slate-600">{c.perCapitaIncome}</td>
+                        <td className="text-right mono font-bold text-red-600">{c.povertyRate}</td>
+                        <td className="text-right mono font-bold text-red-700">{c.childPoverty}</td>
+                        <td className="text-right mono text-slate-500">{c.popChange}</td>
+                        <td className="text-center">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded mono ${
+                            c.verdict === "Transformative" ? "bg-green-100 text-green-800 border border-green-200" :
+                            c.verdict === "Positive" ? "bg-blue-100 text-blue-800 border border-blue-200" :
+                            "bg-amber-100 text-amber-800 border border-amber-200"
+                          }`}>{c.verdict}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="mt-4 lc-card lc-card-amber p-5">
+              <div className="lc-label mb-2">Richland Parish, Louisiana — The Defining Case</div>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Meta&apos;s $27B Hyperion campus is being built in a parish where <strong className="text-red-600">37% of children live in poverty</strong>, per capita
+                income is <strong className="text-slate-900 mono">$42,298</strong>, and the population has declined <strong className="text-red-600">6% since 2010</strong>.
+                Meta wages run <strong className="text-green-600">150% above the state average</strong> (~$80K vs $42K). The parish is receiving
+                <strong> $300M</strong> in direct infrastructure funding. The realistic alternative to this investment
+                isn&apos;t a better industrial project — it&apos;s continued agricultural decline and school funding cuts
+                from a shrinking tax base. The local child poverty rate of 37% represents the world this campus is being built into.
+              </p>
+            </div>
+          </section>
+
+          {/* ── Section 12: Net Verdict ── */}
+          <section>
+            <SH n="12 · Net Assessment" title="The Verdict"
+              sub="Is hosting a data center net positive for a rural US community? The evidence is conditional — but leans heavily positive when governance is done right." />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <div className="lc-card lc-card-green p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <TrendingUp size={16} className="text-green-600" />
+                  <div className="text-xs font-bold text-green-600 uppercase tracking-wide">Net Positive Evidence</div>
+                </div>
+                <ul className="space-y-2.5">
+                  {[
+                    "Loudoun Co., VA: 38% of general fund from 3% of land — 26:1 fiscal benefit ratio",
+                    "Virginia statewide: 74K jobs, $9.1B GDP, $1.64B local taxes/yr, 1:3.5 jobs multiplier",
+                    "Arizona: $25B GDP contribution, $863M combined annual tax revenue (2023)",
+                    "Brookings Institution (peer-reviewed, 770 facilities): +4–5% private employment, +22% information sector",
+                    "Richland Parish: $27B investment into a county with 24% poverty and -6% population decline",
+                    "Project Steamboat, GA: $12K/yr idle parcel → $200M in 10-year property tax (1,666× return)",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                      <span className="text-green-500 font-black mt-0.5 shrink-0">✓</span>{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="lc-card lc-card-red p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <AlertTriangle size={16} className="text-red-500" />
+                  <div className="text-xs font-bold text-red-600 uppercase tracking-wide">Risk Factors</div>
+                </div>
+                <ul className="space-y-2.5">
+                  {[
+                    "Permanent jobs per facility: 50–500 — tiny relative to capex and media coverage",
+                    "Capex per permanent job: $18M–$54M — highest of any major US industry by far",
+                    "$4.3B residential ratepayer burden across 7 states — cost socialized, benefit private",
+                    "Some communities absorb grid/water infrastructure costs with no commensurate tax yield",
+                    "80% of Virginia municipalities with DCs operate under NDAs limiting public accountability",
+                    "xAI Memphis Colossus: gas turbines sited adjacent to Black communities — canonical environmental justice failure",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                      <span className="text-red-500 font-black mt-0.5 shrink-0">⚠</span>{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-5 bg-slate-900 rounded-2xl p-6 sm:p-8">
+              <div className="lc-label text-amber-500 mb-3">The Thesis</div>
+              <blockquote className="text-base sm:text-lg font-semibold leading-relaxed text-white">
+                &ldquo;Data centers are the highest-yielding land-conversion event in modern American local fiscal history — for counties
+                that would otherwise have no anchor industrial investment. The criticism has legitimate teeth on (1) ratepayer
+                cost-shifting where regulators haven&apos;t acted and (2) environmental siting failures. But the alternative for
+                most host counties is not a better industrial project — it&apos;s nothing.&rdquo;
+              </blockquote>
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-5 border-t border-slate-800 pt-6">
+                {[
+                  { label: "Net Positive When", color: "#22c55e", items: ["Fair tax structure — not 100% abated", "Utility regulator blocks ratepayer cost-shift", "Water and EJ constraints respected upfront"] },
+                  { label: "Net Negative When", color: "#ef4444", items: ["Full abatement plus grid costs socialized", "Sited without EJ or water impact analysis", "NDA blocks community oversight entirely"] },
+                  { label: "What Would Falsify This", color: "#94a3b8", items: ["Peer-reviewed studies showing net fiscal loss post-abatement", "Brookings shows population decline increasing vs controls", "Pervasive ratepayer burden + no regulatory mitigation"] },
+                ].map((col) => (
+                  <div key={col.label}>
+                    <div className="text-xs font-bold mb-2.5" style={{ color: col.color }}>{col.label}</div>
+                    <ul className="space-y-1.5">
+                      {col.items.map((item, i) => (
+                        <li key={i} className="text-xs text-slate-400 flex items-start gap-1.5">
+                          <span className="text-slate-600 shrink-0">→</span>{item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── Data Note ── */}
+          <section>
+            <div className="lc-card p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Server size={13} className="text-slate-400" />
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Data Sources & Methodology</span>
+              </div>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                All figures are based on publicly disclosed announcements, state economic development filings, company press releases, JLARC 2024,
+                Brookings Institution 2026, Union of Concerned Scientists 2024, Sage Policy Group / Maryland Tech Council Aug 2025,
+                Hamm Institute 2025, Uptime Institute 2024, ConstructConnect June 2026, JLL / CBRE market reports, and local municipal records — all as of June 2026.
+                Many projects have not yet disclosed final MW capacity, water usage agreements, or full employment commitments.
+                Largest research gaps: Digital Realty, Equinix, CyrusOne, Aligned, Switch, Compass, CloudHQ, STACK, Iron Mountain, and numerous secondary hyperscaler campuses.
+                Total identified capex: ~$290B+ directly disclosed. Hyperscaler 2026 CapEx figures represent global programs with heavy US concentration.
+                Jobs-per-$B figures are estimates based on direct permanent employment disclosures; indirect and induced employment excluded.
+              </p>
+            </div>
+          </section>
+        </div>
       </div>
 
-      {/* ═══ FOOTER ═══ */}
-      <footer style={{ borderTop: "1px solid #1f1f1f", background: "#0a0a0a" }} className="py-8 mt-4">
+      {/* ══ FOOTER (dark) ══ */}
+      <footer style={{ background: "#0a0a0a", borderTop: "1px solid #1a1a1a" }} className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
           <div className="flex items-center justify-center gap-2 mb-3">
             <span className="led-amber" />
-            <span className="mono-num text-xs text-amber-500 font-bold uppercase tracking-widest">US AI Infrastructure Tracker</span>
+            <span className="mono text-xs text-amber-500 font-bold uppercase tracking-widest">US AI Infrastructure Tracker</span>
           </div>
           <div className="text-sm text-slate-500">
             Built by{" "}
-            <a href="https://x.com/Trace_Cohen" target="_blank" rel="noopener noreferrer" className="text-amber-500 font-bold hover:text-amber-400 transition-colors">
+            <a href="https://x.com/Trace_Cohen" target="_blank" rel="noopener noreferrer" className="text-amber-500 font-semibold hover:text-amber-400 transition-colors">
               @Trace_Cohen
             </a>
             {" · "}
-            <a href="mailto:t@nyvp.com" className="text-amber-500 font-bold hover:text-amber-400 transition-colors">
+            <a href="mailto:t@nyvp.com" className="text-amber-500 font-semibold hover:text-amber-400 transition-colors">
               t@nyvp.com
             </a>
           </div>
-          <div className="mono-num text-xs text-slate-600 mt-2">
-            DATA AS OF JUNE 2026 · SOURCES: JLARC 2024 · BROOKINGS 2026 · UCS 2024 · STATE EDA FILINGS · COMPANY DISCLOSURES
-          </div>
+          <div className="mono text-xs text-slate-700 mt-2">DATA AS OF JUNE 2026 · SOURCES: JLARC 2024 · BROOKINGS 2026 · UCS 2024 · SAGE POLICY GROUP 2025 · STATE EDA FILINGS</div>
         </div>
       </footer>
     </main>

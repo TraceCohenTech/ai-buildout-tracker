@@ -2,150 +2,123 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg: #0f0f0f;
-  --bg-card: #1a1a1a;
-  --bg-card-hover: #1f1f1f;
-  --border: #2a2a2a;
-  --border-bright: #3a3a3a;
-  --amber: #f59e0b;
-  --amber-dim: #b45309;
-  --red: #ef4444;
-  --green: #22c55e;
-  --cyan: #06b6d4;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #475569;
-}
-
-* {
-  box-sizing: border-box;
-}
-
+/* ─── Body ─── */
 body {
-  background-color: var(--bg);
-  color: var(--text-primary);
+  background-color: #0f0f0f;
+  color: #f1f5f9;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Subtle dot-grid background */
+/* ─── Dot grid (hero bg) ─── */
 .bg-grid {
   background-image: radial-gradient(circle, #2a2a2a 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* Card styles */
-.dc-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-}
-
-.dc-card-amber {
-  border-left: 3px solid var(--amber);
-}
-
-.dc-card-red {
-  border-left: 3px solid var(--red);
-}
-
-.dc-card-green {
-  border-left: 3px solid var(--green);
-}
-
-.dc-card-cyan {
-  border-left: 3px solid var(--cyan);
-}
-
-/* Label style */
-.sys-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-/* Mono number */
-.mono-num {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Status badges */
-.badge-construction { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.05em; }
-.badge-planned { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.05em; }
-.badge-operational { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.05em; }
-.badge-announced { background: rgba(71,85,105,0.3); color: #64748b; border: 1px solid rgba(71,85,105,0.3); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.05em; }
-.badge-approved { background: rgba(6,182,212,0.15); color: #22d3ee; border: 1px solid rgba(6,182,212,0.3); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.05em; }
-.badge-mixed { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 3px; letter-spacing: 0.05em; }
-
-/* LED dot */
-.led-green { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e; flex-shrink: 0; }
-.led-amber { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 6px #f59e0b; flex-shrink: 0; }
-.led-grey { width: 8px; height: 8px; border-radius: 50%; background: #475569; flex-shrink: 0; }
-.led-red { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 6px #ef4444; flex-shrink: 0; }
-
-/* Ticker */
+/* ─── Ticker ─── */
 @keyframes ticker {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 .ticker-track {
   display: flex;
-  animation: ticker 80s linear infinite;
+  animation: ticker 100s linear infinite;
   width: max-content;
 }
-.ticker-track:hover {
-  animation-play-state: paused;
+.ticker-track:hover { animation-play-state: paused; }
+
+/* ─── LED dots ─── */
+.led-green { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 6px #22c55e99; flex-shrink: 0; }
+.led-amber { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; box-shadow: 0 0 6px #f59e0b99; flex-shrink: 0; }
+.led-grey  { width: 8px; height: 8px; border-radius: 50%; background: #475569; flex-shrink: 0; }
+.led-red   { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 6px #ef444499; flex-shrink: 0; }
+
+/* ─── Mono numbers ─── */
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; font-variant-numeric: tabular-nums; }
+
+/* ─── Amber glow (hero) ─── */
+.amber-glow { color: #f59e0b; text-shadow: 0 0 24px rgba(245,158,11,0.35); }
+
+/* ══════════════════════════════════════════
+   DARK CARDS (hero area, status board)
+══════════════════════════════════════════ */
+.dc-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
 }
 
-/* Amber glow on large numbers */
-.amber-glow {
-  color: #f59e0b;
-  text-shadow: 0 0 20px rgba(245,158,11,0.4);
-}
-
-/* Table styles */
-.dc-table th {
-  background: #141414;
-  color: #475569;
+.sys-label {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 10px 14px;
-  border-bottom: 1px solid #2a2a2a;
-}
-.dc-table td {
-  padding: 10px 14px;
-  border-bottom: 1px solid #1f1f1f;
-  font-size: 12px;
-  color: #cbd5e1;
-}
-.dc-table tr:hover td {
-  background: #1f1f1f;
+  color: #64748b;
 }
 
-/* Scrollbar */
+/* ══════════════════════════════════════════
+   LIGHT CARDS (content sections)
+══════════════════════════════════════════ */
+.lc-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.lc-card-amber { border-left: 3px solid #f59e0b; }
+.lc-card-red   { border-left: 3px solid #ef4444; }
+.lc-card-green { border-left: 3px solid #22c55e; }
+.lc-card-blue  { border-left: 3px solid #3b82f6; }
+
+.lc-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f59e0b;
+}
+
+/* ─── Status badges (light section) ─── */
+.badge-construction { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; white-space: nowrap; }
+.badge-planned      { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; white-space: nowrap; }
+.badge-operational  { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; white-space: nowrap; }
+.badge-announced    { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; white-space: nowrap; }
+.badge-approved     { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; white-space: nowrap; }
+.badge-mixed        { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; white-space: nowrap; }
+
+/* ─── Light tables ─── */
+.lt-table { width: 100%; border-collapse: collapse; }
+.lt-table th {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+.lt-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 12px;
+  color: #334155;
+  vertical-align: middle;
+}
+.lt-table tbody tr:hover td { background: #f8fafc; cursor: default; }
+.lt-table tbody tr:last-child td { border-bottom: none; }
+
+/* ─── Dark tables (status board) ─── */
+.dk-table th { background: #141414; color: #475569; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 10px 14px; border-bottom: 1px solid #2a2a2a; white-space: nowrap; }
+.dk-table td { padding: 10px 14px; border-bottom: 1px solid #1f1f1f; font-size: 12px; color: #cbd5e1; vertical-align: middle; }
+.dk-table tbody tr:hover td { background: #1f1f1f; }
+
+/* ─── Scrollbar ─── */
+.scrollbar-thin::-webkit-scrollbar { height: 4px; width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: #f8fafc; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
 .scrollbar-dark::-webkit-scrollbar { height: 3px; width: 3px; }
 .scrollbar-dark::-webkit-scrollbar-track { background: #111; }
 .scrollbar-dark::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-
-/* Section divider */
-.section-rule {
-  border: none;
-  border-top: 1px solid #2a2a2a;
-}
-
-/* Amber top accent line on hero stats */
-.stat-top-amber::before {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 2px;
-  background: #f59e0b;
-  border-radius: 2px 2px 0 0;
-  margin-bottom: 16px;
-}
