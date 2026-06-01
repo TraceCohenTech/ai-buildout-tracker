@@ -21,6 +21,7 @@ import {
   CONSTRUCTION_VS_PERM_JOBS, PERM_JOBS_BY_ROLE, WAGE_VS_LOCAL_MEDIAN,
   JOBS_TIMELINE, LOCAL_HIRING_DATA,
   RATEPAYER_BURDEN_7STATES, PJM_CAPACITY_AUCTION, RATEPAYER_HOW_IT_WORKS,
+  COMMUNITY_STORIES, WORKFORCE_PIPELINE,
 } from "@/lib/data";
 
 /* ─── Shared tooltip ─── */
@@ -939,6 +940,91 @@ export default function Dashboard() {
                   <div className="text-xs text-slate-400 mt-0.5">{x.sub}</div>
                 </div>
               ))}
+            </div>
+          </section>
+
+          {/* ── Section 10b: Community Transformation Stories ── */}
+          <section>
+            <SH n="10b · Case Studies" title="Community Transformation — The Full Picture"
+              sub="These are the specific stories behind the aggregate numbers. Each represents a county that was losing population, underfunding schools, or watching its agricultural tax base erode — before a data center changed the fiscal math entirely." />
+
+            {/* Story cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+              {COMMUNITY_STORIES.map((s) => (
+                <div key={s.title} className="lc-card p-5 hover:shadow-lg transition-shadow flex flex-col" style={{ borderTop: `3px solid ${s.color}` }}>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div>
+                      <div className="font-black text-slate-900 text-sm leading-tight">{s.title}</div>
+                      <div className="text-xs text-slate-500 mt-0.5">{s.county}</div>
+                    </div>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded mono shrink-0 ${
+                      s.verdict === "Transformative" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"
+                    }`}>{s.verdict}</span>
+                  </div>
+
+                  {/* Key numbers row */}
+                  <div className="grid grid-cols-2 gap-2 my-3">
+                    <div className="bg-slate-50 rounded-lg p-2.5 text-center">
+                      <div className="mono text-base font-black text-slate-900">{s.investment}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">Investment</div>
+                    </div>
+                    <div className="bg-slate-50 rounded-lg p-2.5 text-center">
+                      <div className="mono text-base font-black" style={{ color: s.color }}>{s.taxImpact}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">Tax / Revenue Impact</div>
+                    </div>
+                  </div>
+
+                  {/* Jobs row */}
+                  <div className="flex gap-3 mb-3">
+                    <div className="text-center flex-1">
+                      <div className="mono text-sm font-bold text-amber-600">{s.constructionJobs}</div>
+                      <div className="text-xs text-slate-400">Build jobs</div>
+                    </div>
+                    <div className="text-center flex-1">
+                      <div className="mono text-sm font-bold text-green-600">{s.permJobs}</div>
+                      <div className="text-xs text-slate-400">Perm. jobs</div>
+                    </div>
+                    <div className="text-center flex-1">
+                      <div className="mono text-sm font-bold text-slate-500">{s.pop}</div>
+                      <div className="text-xs text-slate-400">County pop.</div>
+                    </div>
+                  </div>
+
+                  {/* Standout fact */}
+                  <div className="bg-green-50 border border-green-100 rounded-lg p-3 mb-3">
+                    <div className="text-xs font-bold text-green-800 leading-snug">{s.standout}</div>
+                  </div>
+
+                  <div className="text-xs text-slate-400 leading-snug mt-auto">{s.note}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Workforce pipeline */}
+            <div className="lc-card p-5">
+              <div className="text-xs font-bold text-slate-500 mb-1">Community College & Workforce Training Pipelines</div>
+              <p className="text-xs text-slate-400 mb-4">The communities that benefit most are those that moved early on workforce infrastructure — partnering with local colleges before groundbreaking. The data center workforce shortage is now the single biggest constraint on the industry, ahead of power and land.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {WORKFORCE_PIPELINE.map((w) => (
+                  <div key={w.program} className="bg-slate-50 rounded-xl p-4 border border-slate-100 hover:border-amber-200 transition-colors">
+                    <div className="flex items-start gap-2 mb-2">
+                      <Briefcase size={13} className="text-amber-500 shrink-0 mt-0.5" />
+                      <div className="text-xs font-bold text-slate-800 leading-tight">{w.program}</div>
+                    </div>
+                    <div className="text-xs text-amber-700 font-semibold mb-1">{w.partner}</div>
+                    <div className="text-xs text-slate-500 mb-2">{w.location}</div>
+                    {w.wage && (
+                      <div className="mono text-sm font-black text-green-600 mb-1">{w.wage}</div>
+                    )}
+                    <div className="text-xs text-slate-400 leading-snug">{w.detail}</div>
+                    {w.need && (
+                      <div className="mt-2 bg-amber-50 border border-amber-100 rounded px-2 py-1">
+                        <span className="text-xs font-bold text-amber-700">{w.need}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 

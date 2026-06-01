@@ -43,6 +43,7 @@ export const TOP_PROJECTS = [
   { company: "NTT", project: "US Expansion Program", location: "Chicago/Dallas/Phoenix", state: "Multi", status: "Mixed", capex: "$10B", constructionJobs: "TBD", permJobs: "TBD", mw: 130, tenYrImpact: null },
   { company: "Microsoft", project: "Project Steamboat", location: "Fulton County, GA", state: "GA", status: "Approved", capex: "$1.84B", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: 2884919877 },
   { company: "OpenAI / Oracle / Related Digital", project: "Stargate Michigan", location: "Saline Township, Washtenaw Co.", state: "MI", status: "Construction", capex: "$45B+", constructionJobs: "2,500 (union)", permJobs: "450+", mw: 1000, tenYrImpact: null },
+  { company: "Google", project: "Project Spade", location: "New Florence, Montgomery Co.", state: "MO", status: "Planned", capex: "$15B", constructionJobs: "2,000+", permJobs: "Hundreds", mw: null, tenYrImpact: null },
 ];
 
 export const STATES_DATA = [
@@ -167,6 +168,8 @@ export const HOST_COUNTIES = [
   { county: "Newton County, GA", anchor: "Meta Mansfield", investment: "Operational", perCapitaIncome: "Below avg", povertyRate: "~18%", childPoverty: "N/A", popChange: "Growth", verdict: "Mixed" },
   { county: "Pulaski County, AR", anchor: "AVAIO Leo Campus", investment: "$6B+", perCapitaIncome: "Mid-range", povertyRate: "~17%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
   { county: "Ozaukee County, WI", anchor: "Vantage Lighthouse", investment: "$15B", perCapitaIncome: "Mid-range", povertyRate: "~10%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
+  { county: "Bosque County, TX", anchor: "CyrusOne Campus", investment: "Multi-$B", perCapitaIncome: "Below avg", povertyRate: "~18%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
+  { county: "Montgomery County, MO", anchor: "Google Project Spade", investment: "$15B", perCapitaIncome: "Below avg", povertyRate: "~16%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
 ];
 
 export const RATEPAYER_STATE_YOY = [
@@ -331,6 +334,146 @@ export const RATEPAYER_HOW_IT_WORKS = [
   { n: "05", title: "Result: IL +16%, VA +13%, OH +12% YoY", body: "Households in DC-heavy states pay significantly more than the 6% US average increase — while data centers often pay 3–5× less per MWh than residential customers." },
 ];
 
+/* ─── Community Transformation Stories ─── */
+
+export const COMMUNITY_STORIES = [
+  {
+    title: "Google Project Spade",
+    county: "Montgomery County, MO",
+    state: "MO",
+    pop: "11,000",
+    investment: "$15B",
+    constructionJobs: "2,000+",
+    permJobs: "Hundreds",
+    taxImpact: "$10M/yr · 20 years",
+    standout: "$20M Energy Impact Fund reduces household electricity bills in surrounding counties — ratepayer protection baked in from day one",
+    verdict: "Transformative" as const,
+    color: "#22c55e",
+    note: "Largest single investment in Missouri history. Google pays 100% of power infrastructure costs. Training 2,300 construction laborers via IBEW partnership.",
+  },
+  {
+    title: "AWS Project Atlas",
+    county: "Madison County, MS (Canton)",
+    state: "MS",
+    pop: "105,000",
+    investment: "$25B total",
+    constructionJobs: "Thousands",
+    permJobs: "2,000",
+    taxImpact: "75+ MS companies engaged",
+    standout: "Amazon Think Big Corners installed in every Canton elementary school. $12M invested in workforce + education since 2024. 7,000+ students served.",
+    verdict: "Transformative" as const,
+    color: "#22c55e",
+    note: "One local engineering firm grew from 4 to 18 employees. 83M gallons/yr recycled wastewater cooling by 2027. AWS covers all power infrastructure costs.",
+  },
+  {
+    title: "Meta Hyperion — Year 1 Results",
+    county: "Richland Parish, LA",
+    state: "LA",
+    pop: "20,000",
+    investment: "$27B",
+    constructionJobs: "5,000",
+    permJobs: "500",
+    taxImpact: "$875M local contracts (Year 1)",
+    standout: "Community Action Grants to 9 local schools for STEM labs, VR instruction, robotics. Meta wages 150% above LA state average.",
+    verdict: "Transformative" as const,
+    color: "#22c55e",
+    note: "County poverty rate: 24%. Population declining since 2010. $300M direct infrastructure funding committed. $74M distributed globally since 2011 via grants program.",
+  },
+  {
+    title: "CyrusOne — Bosque County, TX",
+    county: "Bosque County, TX",
+    state: "TX",
+    pop: "19,000",
+    investment: "Multi-$B",
+    constructionJobs: "TBD",
+    permJobs: "TBD",
+    taxImpact: "+120% county tax revenue",
+    standout: '"A paradigm-changer" — Mayor: funds streets and city services underfunded for years. $70M projected over 30 years for a county of 19,000.',
+    verdict: "Transformative" as const,
+    color: "#22c55e",
+    note: "Rural county northwest of Waco. Years of infrastructure underfunding due to declining agricultural base. DC projected to fund decades of catch-up spending.",
+  },
+  {
+    title: "Stargate Michigan",
+    county: "Washtenaw County, MI",
+    state: "MI",
+    pop: "380,000",
+    investment: "$45B+",
+    constructionJobs: "2,500 (union)",
+    permJobs: "450+",
+    taxImpact: "1,500 community + support jobs",
+    standout: "First union-built Stargate campus — 100% IBEW + operating engineers. Historic red barn preserved at entrance. Near U of Michigan and EMU.",
+    verdict: "Positive" as const,
+    color: "#3b82f6",
+    note: "1GW campus. 1.4GW DTE Energy agreement. Closed-loop cooling system. Delivery end 2027. OpenAI / Oracle / Related Digital.",
+  },
+  {
+    title: "Loudoun County, VA — The Benchmark",
+    county: "Loudoun County, VA",
+    state: "VA",
+    pop: "440,000",
+    investment: "N/D (cluster)",
+    constructionJobs: "N/D",
+    permJobs: "Part of 74K statewide",
+    taxImpact: "38% of general fund · 26:1 ratio",
+    standout: "3% of the county's land generates 38% of the general fund. Lowest property tax rate in Northern Virginia. Schools fully funded.",
+    verdict: "Transformative" as const,
+    color: "#22c55e",
+    note: "Established since early 2000s. 4,000MW operational. The reference case for every county negotiating a DC deal today.",
+  },
+];
+
+export const WORKFORCE_PIPELINE = [
+  {
+    program: "LDCC Data Center Technician Program",
+    partner: "Louisiana Delta CC + CBRE",
+    location: "Monroe, LA",
+    need: "1,500 technicians projected",
+    wage: "$18–$26/hr starting",
+    detail: "First graduating class May 2026. Purpose-built for Meta Hyperion / North Louisiana DC cluster. Technical knowledge, safety, and operational readiness.",
+  },
+  {
+    program: "Amazon Think Big Corners",
+    partner: "AWS + Canton Public Schools",
+    location: "Canton, MS",
+    need: "2,000 students/yr",
+    wage: null,
+    detail: "STEM labs in every Canton elementary school. $12M invested in workforce + education since 2024, serving 7,000+ students and 1,000+ educators.",
+  },
+  {
+    program: "Google / IBEW Laborers Training",
+    partner: "Google + Laborers & Contractors Training Center",
+    location: "Eastern Missouri",
+    need: "2,300 construction laborers",
+    wage: "$140K avg annual comp",
+    detail: "Training 2,300 construction laborers (1,500 apprentices) over 2 years ahead of $15B Project Spade groundbreaking.",
+  },
+  {
+    program: "Vantage + WCTC Apprenticeship",
+    partner: "Vantage Data Centers + Waukesha County TC",
+    location: "Port Washington, WI",
+    need: "4,000+ construction; 1,000+ ops",
+    wage: null,
+    detail: "Apprenticeship pipeline for Lighthouse Campus ($15B). Local hiring target baked into community benefit agreement.",
+  },
+  {
+    program: "Google Community AI Fellowship",
+    partner: "Google Data Centers",
+    location: "Multiple US markets",
+    need: "Ongoing",
+    wage: null,
+    detail: "2026 fellowship placing community members in AI and data center roles near operating campuses. Focus on local talent development.",
+  },
+  {
+    program: "PA Community College Partnership",
+    partner: "Multiple PA colleges + AWS + CoreWeave",
+    location: "Pennsylvania statewide",
+    need: "1,250+ ops jobs incoming",
+    wage: null,
+    detail: "Statewide initiative to train DC workforce ahead of AWS $20B + CoreWeave $6B buildout. First-of-kind multi-college coordination.",
+  },
+];
+
 export const TICKER_ITEMS = [
   "LIVE: Stargate Abilene — 200MW operational, 1,000MW under construction in Abilene, TX",
   "PJM capacity auction: $2.2B → $14.7B (+568% YoY) — residential bills absorbing the shock",
@@ -349,4 +492,9 @@ export const TICKER_ITEMS = [
   "Construction workers: $140K avg annual comp, $70/hr — pulling workforce from 300-mile radius",
   "Stargate Michigan: $45B+ / 1GW / 2,500 union construction jobs / 450+ permanent — Saline Township, Washtenaw County",
   "Stargate Michigan: first union-built Stargate campus — IBEW + operating engineers; delivery end 2027",
+  "Google Project Spade: $15B / Montgomery County, MO — largest investment in Missouri history; trains 2,300 construction laborers via IBEW",
+  "AWS Canton, MS: Amazon Think Big Corners in every elementary school; $12M in workforce investment; 7,000+ students served",
+  "Meta Hyperion Year 1: $875M in local contracts; grants to 9 Richland Parish schools for STEM labs and VR instruction",
+  "Bosque County, TX (CyrusOne): DC projected to increase county tax revenue 120% — $70M over 30 years for county of 19,000",
+  "Louisiana Delta Community College: new DC Technician program — 1,500 technicians needed; $18–$26/hr starting wage",
 ];
