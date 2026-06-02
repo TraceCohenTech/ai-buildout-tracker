@@ -49,6 +49,9 @@ export const TOP_PROJECTS = [
   { company: "Hut 8", project: "Beacon Point Campus", location: "Robstown, Nueces Co.", state: "TX", status: "Construction", capex: "$17B", constructionJobs: "1,900", permJobs: "230", mw: null, tenYrImpact: null },
   { company: "SoftBank / SB Energy / AEP Ohio", project: "PORTS Technology Campus", location: "Pike County (Portsmouth), OH", state: "OH", status: "Construction", capex: "$33B (Phase 1) / $500B potential", constructionJobs: "35,000 (peak)", permJobs: "2,500", mw: 10000, tenYrImpact: null },
   { company: "STACK Infrastructure", project: "Berry Hill Mega Campus", location: "Pittsylvania County, VA", state: "VA", status: "Approved", capex: "$100B (30-yr)", constructionJobs: "4,000+", permJobs: "2,500", mw: null, tenYrImpact: null },
+  { company: "Creekstone Energy", project: "Delta Gigasite", location: "Millard County (Delta), UT", state: "UT", status: "Construction", capex: "$17B (20-yr)", constructionJobs: "TBD", permJobs: "106+", mw: 9700, tenYrImpact: null },
+  { company: "Nscale / Microsoft / NVIDIA", project: "Monarch Compute Campus", location: "Mason County (Point Pleasant), WV", state: "WV", status: "Construction", capex: "TBD", constructionJobs: "TBD", permJobs: "TBD", mw: 8000, tenYrImpact: null },
+  { company: "Nexus Data Centers", project: "Hubbard AI Campus", location: "Hill County (Hubbard), TX", state: "TX", status: "Construction", capex: "TBD", constructionJobs: "Thousands", permJobs: "Hundreds", mw: 600, tenYrImpact: null },
 ];
 
 export const STATES_DATA = [
@@ -68,6 +71,9 @@ export const STATES_DATA = [
   { state: "LA", state_name: "Louisiana", operational: 10, pipeline: 10, commissionedMW: null, gdpB: null, localTaxB: null, jobs: null, multiplier: null, notes: "Meta Hyperion $27B in Richland Parish. Entergy: 2,260MW new gas generation." },
   { state: "MO", state_name: "Missouri", operational: 20, pipeline: 15, commissionedMW: null, gdpB: null, localTaxB: null, jobs: null, multiplier: null, notes: "Google KC 500MW; AWS Northland $10B (5 DCs)." },
   { state: "IA", state_name: "Iowa", operational: 25, pipeline: 5, commissionedMW: null, gdpB: null, localTaxB: null, jobs: null, multiplier: null, notes: "$15B invested since mid-2000s. Established cluster." },
+  { state: "UT", state_name: "Utah", operational: 15, pipeline: 20, commissionedMW: 9700, gdpB: null, localTaxB: null, jobs: null, multiplier: null, notes: "Creekstone Delta Gigasite $17B / 9.7GW — Millard County. Nuclear + solar + gas hybrid. World's largest proposed AI campus footprint." },
+  { state: "WV", state_name: "West Virginia", operational: 0, pipeline: 10, commissionedMW: 8000, gdpB: null, localTaxB: null, jobs: null, multiplier: null, notes: "Nscale Monarch 8GW / Microsoft 1.35GW LOI — Mason County. Nation's first state-certified AI microgrid. NVIDIA Vera Rubin GPU deployment." },
+  { state: "NM", state_name: "New Mexico", operational: 5, pipeline: 10, commissionedMW: 7000, gdpB: null, localTaxB: null, jobs: null, multiplier: null, notes: "New Era Energy Lea County 7GW / gas + nuclear. Pecos County GW Ranch 5GW (Pacifico Energy). Emerging Permian Basin power hub." },
 ];
 
 export const MW_BY_STATE = [
@@ -139,6 +145,9 @@ export const PROJECT_STATUS_BOARD = [
   { name: "Google-Blackstone TPU JV", operator: "Google / Blackstone", state: "Multi", mw: 500, status: "ANNOUNCED", statusColor: "#475569", capex: "$25B" },
   { name: "PORTS Tech Campus", operator: "SoftBank / AEP Ohio", state: "OH", mw: 10000, status: "BUILDING", statusColor: "#f59e0b", capex: "$33B+" },
   { name: "STACK Berry Hill", operator: "STACK Infrastructure", state: "VA", mw: null, status: "APPROVED", statusColor: "#3b82f6", capex: "$100B" },
+  { name: "Delta Gigasite", operator: "Creekstone Energy", state: "UT", mw: 9700, status: "BUILDING", statusColor: "#f59e0b", capex: "$17B" },
+  { name: "Monarch Compute Campus", operator: "Nscale / Microsoft", state: "WV", mw: 8000, status: "BUILDING", statusColor: "#f59e0b", capex: "TBD" },
+  { name: "Nexus Hubbard Campus", operator: "Nexus Data Centers", state: "TX", mw: 600, status: "BUILDING", statusColor: "#f59e0b", capex: "TBD" },
 ];
 
 export const FISCAL_BENEFIT_RATIOS = [
@@ -180,6 +189,11 @@ export const HOST_COUNTIES = [
   { county: "Bosque County, TX", anchor: "CyrusOne Campus", investment: "Multi-$B", perCapitaIncome: "Below avg", povertyRate: "~18%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
   { county: "Montgomery County, MO", anchor: "Google Project Spade", investment: "$15B", perCapitaIncome: "Below avg", povertyRate: "~16%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
   { county: "Nueces County, TX", anchor: "Hut 8 Beacon Point", investment: "$17B", perCapitaIncome: "Below avg", povertyRate: "~19%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
+  { county: "Millard County, UT", anchor: "Creekstone Delta Gigasite", investment: "$17B (20-yr)", perCapitaIncome: "Below avg", povertyRate: "~11%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
+  { county: "Mason County, WV", anchor: "Nscale Monarch Campus", investment: "TBD", perCapitaIncome: "Below avg", povertyRate: "~18%", childPoverty: "N/A", popChange: "Declining", verdict: "Positive" },
+  { county: "Hill County, TX", anchor: "Nexus Hubbard Campus", investment: "TBD + $50M community fund", perCapitaIncome: "Below avg", povertyRate: "~16%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
+  { county: "Pittsylvania County, VA", anchor: "STACK Berry Hill", investment: "$100B (30-yr)", perCapitaIncome: "Below avg", povertyRate: "~17%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
+  { county: "Pike County, OH", anchor: "SoftBank PORTS Campus", investment: "$33B+ (Phase 1)", perCapitaIncome: "Below avg", povertyRate: "~22%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
 ];
 
 export const RATEPAYER_STATE_YOY = [
@@ -512,6 +526,10 @@ export const TICKER_ITEMS = [
   "Google + Blackstone: $25B TPU Cloud joint venture — 500MW online by 2027; sells TPU compute directly to enterprises",
   "KKR launches Helix Digital Infrastructure: $10B+ / ex-AWS CEO Adam Selipsky — power, networking + data center assets",
   "Hut 8 Beacon Point, Nueces Co. TX: $17B / 1,900 construction jobs / 230 permanent — 15-year $9.8B lease signed",
+  "Creekstone Delta Gigasite: $17B / 9,700 MW — Millard County, UT; nuclear + solar + gas hybrid; Utah Gov confirmed; construction underway",
+  "Nscale Monarch Compute Campus: 8GW / Mason County WV — Microsoft signed 1.35GW LOI; NVIDIA Vera Rubin NVL72 GPUs; nation's first state-certified AI microgrid",
+  "Nexus Data Centers Hubbard, TX: $50M community partnership fund for Hill County — construction underway; 600MW Phase 1 / 7.2GW expansion potential",
+  "STACK Infrastructure Berry Hill: $100B / 30 years / 2,500 jobs @ $80,500+ avg — Pittsylvania Co. VA; approved May 2026; 3rd-largest industrial announcement in US history",
   "US data centers: 4,011 facilities / 50+ GW total capacity (March 2026) — demand growing to 41 GW in 2026 from 31 GW in 2025",
   "CoreWeave (CRWV): $99.4B revenue backlog · $2.1B Q1 revenue (+112% YoY) · $12–13B 2026 revenue guidance · $8.5B non-recourse loan closed",
   "SoftBank PORTS Campus, Pike County OH: 10GW / $500B potential — world's largest proposed AI data center; 35,000 construction jobs, 2,500 permanent; DOE public-private partnership; groundbreaking March 2026",
