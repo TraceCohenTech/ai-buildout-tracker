@@ -154,13 +154,13 @@ export default function Dashboard() {
           <h1 className="text-4xl sm:text-6xl font-black leading-none tracking-tight text-slate-100">AI BUILDOUT</h1>
           <h1 className="text-4xl sm:text-6xl font-black leading-none tracking-tight amber-glow mb-5">TRACKER</h1>
           <p className="text-sm sm:text-base text-slate-500 max-w-2xl mb-8 leading-relaxed">
-            $290B+ in announced data center investment is rewiring rural America — flooding depopulating counties with
+            $500B+ in tracked US data center investment is rewiring rural America — flooding depopulating counties with
             construction crews, overloading the electrical grid, and reshaping local fiscal policy in ways that will last decades.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
             {[
-              { label: "Identified CapEx", value: "$290B+", color: "#f59e0b" },
-              { label: "Hyperscaler CapEx 2026", value: "$690B", color: "#f59e0b" },
+              { label: "Tracked US CapEx", value: "$500B+", color: "#f59e0b" },
+              { label: "Hyperscaler CapEx 2026", value: "$760B", color: "#f59e0b" },
               { label: "Stargate Total", value: "$500B", color: "#ef4444" },
               { label: "US Facilities (Mar 2026)", value: "4,011", color: "#22c55e" },
               { label: "US Grid Capacity", value: "50+ GW", color: "#06b6d4" },
@@ -192,7 +192,7 @@ export default function Dashboard() {
           {/* ── Section 1: Capital Deployment ── */}
           <section>
             <SH n="01 · Capital Deployment" title="The Spending Ramp"
-              sub="Hyperscaler AI infrastructure spend has grown nearly 10× in three years. The 2026 pace of $690B — Amazon $200B, Google $185B, Meta $135B, Microsoft $120B, Oracle $50B — exceeds the GDP of Switzerland. The $7T through-2030 projection would make this the largest coordinated private capital deployment in history." />
+              sub="Hyperscaler AI infrastructure spend has grown nearly 10× in three years. The 2026 pace of $760B — Amazon $200B, Microsoft $190B, Google $185B, Meta $135B, Oracle $50B — exceeds the combined GDP of Switzerland and Argentina. The $7T through-2030 projection would make this the largest coordinated private capital deployment in history." />
 
             {/* Breaking: Alphabet $80B raise */}
             <div className="lc-card mb-5 overflow-hidden">

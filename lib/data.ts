@@ -2,7 +2,7 @@ export const HYPERSCALER_CAPEX_2026 = [
   { name: "Amazon / AWS", capex: 200, color: "#f59e0b" },
   { name: "Alphabet / Google", capex: 185, color: "#ef4444" },
   { name: "Meta", capex: 135, color: "#3b82f6" },
-  { name: "Microsoft", capex: 120, color: "#22c55e" },
+  { name: "Microsoft", capex: 190, color: "#22c55e" },
   { name: "Oracle", capex: 50, color: "#8b5cf6" },
 ];
 
@@ -10,7 +10,7 @@ export const CAPEX_RAMP = [
   { year: "2023", spend: 118 },
   { year: "2024", spend: 230 },
   { year: "2025", spend: 350 },
-  { year: "2026E", spend: 690 },
+  { year: "2026E", spend: 760 },
   { year: "2030E", spend: 1200 },
 ];
 
@@ -47,6 +47,8 @@ export const TOP_PROJECTS = [
   { company: "Google / Blackstone", project: "TPU Cloud JV", location: "US (multiple)", state: "Multi", status: "Announced", capex: "$25B (incl. leverage)", constructionJobs: "TBD", permJobs: "TBD", mw: 500, tenYrImpact: null },
   { company: "KKR / Helix Digital", project: "Helix Digital Infrastructure", location: "US (multiple)", state: "Multi", status: "Announced", capex: "$10B+", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: null },
   { company: "Hut 8", project: "Beacon Point Campus", location: "Robstown, Nueces Co.", state: "TX", status: "Construction", capex: "$17B", constructionJobs: "1,900", permJobs: "230", mw: null, tenYrImpact: null },
+  { company: "SoftBank / SB Energy / AEP Ohio", project: "PORTS Technology Campus", location: "Pike County (Portsmouth), OH", state: "OH", status: "Construction", capex: "$33B (Phase 1) / $500B potential", constructionJobs: "35,000 (peak)", permJobs: "2,500", mw: 10000, tenYrImpact: null },
+  { company: "STACK Infrastructure", project: "Berry Hill Mega Campus", location: "Pittsylvania County, VA", state: "VA", status: "Approved", capex: "$100B (30-yr)", constructionJobs: "4,000+", permJobs: "2,500", mw: null, tenYrImpact: null },
 ];
 
 export const STATES_DATA = [
@@ -118,7 +120,7 @@ export const PROJECT_STATUS_BOARD = [
   { name: "xAI Colossus", operator: "xAI", state: "TN", mw: 150, status: "ONLINE", statusColor: "#22c55e", capex: "N/D" },
   { name: "Loudoun Cluster", operator: "Multi-tenant", state: "VA", mw: 4000, status: "ONLINE", statusColor: "#22c55e", capex: "N/D" },
   { name: "Meta Hyperion", operator: "Meta", state: "LA", mw: 5000, status: "BUILDING", statusColor: "#f59e0b", capex: "$27B" },
-  { name: "Vantage Lighthouse", operator: "Vantage", state: "WI", mw: 902, status: "BUILDING", statusColor: "#f59e0b", capex: "$15B" },
+  { name: "Stargate Wisconsin (Lighthouse)", operator: "OpenAI/Oracle/Vantage", state: "WI", mw: 902, status: "BUILDING", statusColor: "#f59e0b", capex: "$15B" },
   { name: "xAI Southaven", operator: "xAI", state: "MS", mw: 2000, status: "BUILDING", statusColor: "#f59e0b", capex: "$20B" },
   { name: "AWS Indiana", operator: "AWS", state: "IN", mw: null, status: "BUILDING", statusColor: "#f59e0b", capex: "$11B" },
   { name: "Microsoft Fairwater", operator: "Microsoft", state: "GA", mw: null, status: "BUILDING", statusColor: "#f59e0b", capex: "$80B" },
@@ -135,6 +137,8 @@ export const PROJECT_STATUS_BOARD = [
   { name: "Stargate Michigan", operator: "OpenAI/Oracle", state: "MI", mw: 1000, status: "BUILDING", statusColor: "#f59e0b", capex: "$45B+" },
   { name: "Hut 8 Beacon Point", operator: "Hut 8", state: "TX", mw: null, status: "BUILDING", statusColor: "#f59e0b", capex: "$17B" },
   { name: "Google-Blackstone TPU JV", operator: "Google / Blackstone", state: "Multi", mw: 500, status: "ANNOUNCED", statusColor: "#475569", capex: "$25B" },
+  { name: "PORTS Tech Campus", operator: "SoftBank / AEP Ohio", state: "OH", mw: 10000, status: "BUILDING", statusColor: "#f59e0b", capex: "$33B+" },
+  { name: "STACK Berry Hill", operator: "STACK Infrastructure", state: "VA", mw: null, status: "APPROVED", statusColor: "#3b82f6", capex: "$100B" },
 ];
 
 export const FISCAL_BENEFIT_RATIOS = [
@@ -494,7 +498,7 @@ export const TICKER_ITEMS = [
   "YTD April 2026: $49.5B in 74 projects broke ground across the United States",
   "Loudoun County, VA: 38% of county general fund generated from 3% of its land (26:1 fiscal ratio)",
   "xAI Southaven, MS: $20B / 2GW / 1M GPU target — largest xAI project ever announced",
-  "5 hyperscalers combined 2026 CapEx: $675B — exceeds the entire GDP of Switzerland",
+  "5 hyperscalers combined 2026 CapEx: $760B — Amazon $200B · Microsoft $190B · Google $185B · Meta $135B · Oracle $50B",
   "Microsoft restarted Three Mile Island nuclear plant under 20-year PPA for Azure data centers",
   "AFBF: 4,925 active/under-construction data centers — most converted farmland won't return to ag",
   "Construction workers: $140K avg annual comp, $70/hr — pulling workforce from 300-mile radius",
@@ -509,7 +513,10 @@ export const TICKER_ITEMS = [
   "KKR launches Helix Digital Infrastructure: $10B+ / ex-AWS CEO Adam Selipsky — power, networking + data center assets",
   "Hut 8 Beacon Point, Nueces Co. TX: $17B / 1,900 construction jobs / 230 permanent — 15-year $9.8B lease signed",
   "US data centers: 4,011 facilities / 50+ GW total capacity (March 2026) — demand growing to 41 GW in 2026 from 31 GW in 2025",
-  "CoreWeave (CRWV): $99.4B revenue backlog · $2.1B Q1 2026 revenue (+112% YoY) · $30B+ 2026 CapEx",
+  "CoreWeave (CRWV): $99.4B revenue backlog · $2.1B Q1 revenue (+112% YoY) · $12–13B 2026 revenue guidance · $8.5B non-recourse loan closed",
+  "SoftBank PORTS Campus, Pike County OH: 10GW / $500B potential — world's largest proposed AI data center; 35,000 construction jobs, 2,500 permanent; DOE public-private partnership; groundbreaking March 2026",
+  "STACK Infrastructure Berry Hill, Pittsylvania Co. VA: $100B / 30 years / 2,500 jobs @ $80,500+ avg — approved May 2026; 3rd-largest industrial announcement in US history",
+  "Microsoft Q3 FY2026: raises 2026 capex guidance to $190B — up from $120B; $25B attributable to component price inflation; AI revenue run rate hits $37B (+123% YoY)",
   "Stargate Abilene: 4 of 8 buildings operational, ~300MW live — full 1,200MW campus on track",
   "86 GW new utility-scale power planned for US grid in 2026 — a record driven by data center demand",
 ];
