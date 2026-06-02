@@ -16,6 +16,23 @@ body {
   background-size: 24px 24px;
 }
 
+/* ─── Blueprint / engineering grid (hero bg) ─── */
+.bg-blueprint {
+  background-image:
+    linear-gradient(rgba(245,158,11,0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,158,11,0.11) 1px, transparent 1px),
+    linear-gradient(rgba(245,158,11,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,158,11,0.04) 1px, transparent 1px),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 22px,
+      rgba(245,158,11,0.018) 22px,
+      rgba(245,158,11,0.018) 23px
+    );
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px, auto;
+}
+
 /* ─── Ticker ─── */
 @keyframes ticker {
   0%   { transform: translateX(0); }
@@ -23,7 +40,7 @@ body {
 }
 .ticker-track {
   display: flex;
-  animation: ticker 100s linear infinite;
+  animation: ticker 260s linear infinite;
   width: max-content;
 }
 .ticker-track:hover { animation-play-state: paused; }
