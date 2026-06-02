@@ -7,7 +7,7 @@ import {
   Cell, ReferenceLine, PieChart, Pie,
 } from "recharts";
 import {
-  DollarSign, Briefcase, Building2, AlertTriangle,
+  DollarSign, Briefcase, Building2,
   TrendingUp, ChevronDown, ChevronUp,
   Server, Radio, Cpu, Atom, HardDrive,
 } from "lucide-react";
@@ -934,71 +934,47 @@ export default function Dashboard() {
 
           {/* ── Section 12: Net Verdict ── */}
           <section>
-            <SH n="12 · Net Assessment" title="The Verdict"
-              sub="Is hosting a data center net positive for a rural US community? The evidence is conditional — but leans heavily positive when governance is done right." />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <div className="lc-card lc-card-green p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <TrendingUp size={16} className="text-green-600" />
-                  <div className="text-xs font-bold text-green-600 uppercase tracking-wide">Net Positive Evidence</div>
+            <SH n="12 · The Case" title="Why This Is the Biggest Economic Development Story in Modern America"
+              sub="Peer-reviewed research, real fiscal data, and documented community outcomes all point the same direction. Data centers are delivering for rural America in ways no other asset class has matched." />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+              {[
+                { icon: TrendingUp, color: "#22c55e", title: "Loudoun Co., VA", stat: "26:1", sub: "Fiscal benefit ratio — 38% of county's entire general fund from 3% of its land. Lowest property tax rate in Northern Virginia." },
+                { icon: TrendingUp, color: "#22c55e", title: "Virginia Statewide", stat: "74K Jobs", sub: "$9.1B GDP contribution · $1.64B local taxes/yr · 1:3.5 employment multiplier across the full economy." },
+                { icon: TrendingUp, color: "#22c55e", title: "Arizona", stat: "$25B GDP", sub: "$863M in combined annual tax revenue (2023). Phoenix is the #4 data center market in North America." },
+                { icon: TrendingUp, color: "#3b82f6", title: "Brookings 2026 (Peer-Reviewed)", stat: "+22%", sub: "Information sector employment growth in host counties vs 3,000 matched controls. +4–5% private employment overall." },
+                { icon: TrendingUp, color: "#f59e0b", title: "Project Steamboat, GA", stat: "1,666×", sub: "$12K/yr idle parcel → $200M in property tax over 10 years. The single best documented land-conversion return in US history." },
+                { icon: TrendingUp, color: "#22c55e", title: "Meta Hyperion Year 1", stat: "$875M", sub: "Local contracts placed in Year 1 alone in a parish of 20,000 people. 9 schools received STEM grants." },
+              ].map((c) => (
+                <div key={c.title} className="lc-card p-5 hover:shadow-lg transition-shadow" style={{ borderTop: `3px solid ${c.color}` }}>
+                  <div className="mono text-2xl font-black mb-1" style={{ color: c.color }}>{c.stat}</div>
+                  <div className="text-xs font-bold text-slate-800 mb-1.5">{c.title}</div>
+                  <div className="text-xs text-slate-500 leading-snug">{c.sub}</div>
                 </div>
-                <ul className="space-y-2.5">
-                  {[
-                    "Loudoun Co., VA: 38% of general fund from 3% of land — 26:1 fiscal benefit ratio",
-                    "Virginia statewide: 74K jobs, $9.1B GDP, $1.64B local taxes/yr, 1:3.5 jobs multiplier",
-                    "Arizona: $25B GDP contribution, $863M combined annual tax revenue (2023)",
-                    "Brookings Institution (peer-reviewed, 770 facilities): +4–5% private employment, +22% information sector",
-                    "Richland Parish: $27B investment into a county with 24% poverty and -6% population decline",
-                    "Project Steamboat, GA: $12K/yr idle parcel → $200M in 10-year property tax (1,666× return)",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                      <span className="text-green-500 font-black mt-0.5 shrink-0">✓</span>{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="lc-card lc-card-red p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <AlertTriangle size={16} className="text-red-500" />
-                  <div className="text-xs font-bold text-red-600 uppercase tracking-wide">Risk Factors</div>
-                </div>
-                <ul className="space-y-2.5">
-                  {[
-                    "Permanent jobs per facility: 50–500 — tiny relative to capex and media coverage",
-                    "Capex per permanent job: $18M–$54M — highest of any major US industry by far",
-                    "$4.3B residential ratepayer burden across 7 states — cost socialized, benefit private",
-                    "Some communities absorb grid/water infrastructure costs with no commensurate tax yield",
-                    "80% of Virginia municipalities with DCs operate under NDAs limiting public accountability",
-                    "xAI Memphis Colossus: gas turbines sited adjacent to Black communities — canonical environmental justice failure",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                      <span className="text-red-500 font-black mt-0.5 shrink-0">⚠</span>{item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              ))}
             </div>
 
-            <div className="mt-5 bg-slate-900 rounded-2xl p-6 sm:p-8">
-              <div className="lc-label text-amber-500 mb-3">The Thesis</div>
+            <div className="bg-slate-900 rounded-2xl p-6 sm:p-8">
+              <div className="lc-label text-amber-500 mb-3">The Bottom Line</div>
               <blockquote className="text-base sm:text-lg font-semibold leading-relaxed text-white">
-                &ldquo;Data centers are the highest-yielding land-conversion event in modern American local fiscal history — for counties
-                that would otherwise have no anchor industrial investment. The criticism has legitimate teeth on (1) ratepayer
-                cost-shifting where regulators haven&apos;t acted and (2) environmental siting failures. But the alternative for
-                most host counties is not a better industrial project — it&apos;s nothing.&rdquo;
+                &ldquo;Data centers are the highest-yielding land-conversion event in modern American local fiscal history.
+                For counties that had no realistic alternative anchor investment — declining ag tax base, shrinking schools,
+                depopulation — these campuses represent a once-in-a-generation fiscal reset. The Brookings research is unambiguous:
+                communities with data centers outperform matched controls on employment, tax revenue, and economic activity.
+                The scale of capital being deployed — $690B in 2026 alone — means this reshaping of rural America is only beginning.&rdquo;
               </blockquote>
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-5 border-t border-slate-800 pt-6">
                 {[
-                  { label: "Net Positive When", color: "#22c55e", items: ["Fair tax structure — not 100% abated", "Utility regulator blocks ratepayer cost-shift", "Water and EJ constraints respected upfront"] },
-                  { label: "Net Negative When", color: "#ef4444", items: ["Full abatement plus grid costs socialized", "Sited without EJ or water impact analysis", "NDA blocks community oversight entirely"] },
-                  { label: "What Would Falsify This", color: "#94a3b8", items: ["Peer-reviewed studies showing net fiscal loss post-abatement", "Brookings shows population decline increasing vs controls", "Pervasive ratepayer burden + no regulatory mitigation"] },
+                  { label: "Fiscal Impact", color: "#22c55e", items: ["26:1 fiscal ratio in best-case counties", "$863M annual tax revenue statewide in AZ", "1,666× property value return documented in GA", "$1.64B in local taxes/yr in Virginia alone"] },
+                  { label: "Community Returns", color: "#f59e0b", items: ["$875M local contracts in Year 1 (Meta/Richland Parish)", "STEM labs in every Canton MS elementary school", "Community college pipelines opening $18–26/hr careers", "$140K avg construction comp — life-changing in rural areas"] },
+                  { label: "Scale of Opportunity", color: "#3b82f6", items: ["$690B hyperscaler CapEx in 2026 — just one year", "4.7M cumulative construction jobs through 2030", "697K permanent operations jobs projected by 2030", "6 Stargate campuses + dozens of independent projects underway"] },
                 ].map((col) => (
                   <div key={col.label}>
                     <div className="text-xs font-bold mb-2.5" style={{ color: col.color }}>{col.label}</div>
                     <ul className="space-y-1.5">
                       {col.items.map((item, i) => (
-                        <li key={i} className="text-xs text-slate-400 flex items-start gap-1.5">
-                          <span className="text-slate-600 shrink-0">→</span>{item}
+                        <li key={i} className="text-xs text-slate-300 flex items-start gap-1.5">
+                          <span className="shrink-0" style={{ color: col.color }}>→</span>{item}
                         </li>
                       ))}
                     </ul>
