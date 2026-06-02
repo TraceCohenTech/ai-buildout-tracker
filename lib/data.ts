@@ -1,7 +1,7 @@
 export const HYPERSCALER_CAPEX_2026 = [
   { name: "Amazon / AWS", capex: 200, color: "#f59e0b" },
   { name: "Alphabet / Google", capex: 185, color: "#ef4444" },
-  { name: "Meta", capex: 125, color: "#3b82f6" },
+  { name: "Meta", capex: 135, color: "#3b82f6" },
   { name: "Microsoft", capex: 120, color: "#22c55e" },
   { name: "Oracle", capex: 50, color: "#8b5cf6" },
 ];
@@ -10,7 +10,7 @@ export const CAPEX_RAMP = [
   { year: "2023", spend: 118 },
   { year: "2024", spend: 230 },
   { year: "2025", spend: 350 },
-  { year: "2026E", spend: 680 },
+  { year: "2026E", spend: 690 },
   { year: "2030E", spend: 1200 },
 ];
 
@@ -44,6 +44,9 @@ export const TOP_PROJECTS = [
   { company: "Microsoft", project: "Project Steamboat", location: "Fulton County, GA", state: "GA", status: "Approved", capex: "$1.84B", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: 2884919877 },
   { company: "OpenAI / Oracle / Related Digital", project: "Stargate Michigan", location: "Saline Township, Washtenaw Co.", state: "MI", status: "Construction", capex: "$45B+", constructionJobs: "2,500 (union)", permJobs: "450+", mw: 1000, tenYrImpact: null },
   { company: "Google", project: "Project Spade", location: "New Florence, Montgomery Co.", state: "MO", status: "Planned", capex: "$15B", constructionJobs: "2,000+", permJobs: "Hundreds", mw: null, tenYrImpact: null },
+  { company: "Google / Blackstone", project: "TPU Cloud JV", location: "US (multiple)", state: "Multi", status: "Announced", capex: "$25B (incl. leverage)", constructionJobs: "TBD", permJobs: "TBD", mw: 500, tenYrImpact: null },
+  { company: "KKR / Helix Digital", project: "Helix Digital Infrastructure", location: "US (multiple)", state: "Multi", status: "Announced", capex: "$10B+", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: null },
+  { company: "Hut 8", project: "Beacon Point Campus", location: "Robstown, Nueces Co.", state: "TX", status: "Construction", capex: "$17B", constructionJobs: "1,900", permJobs: "230", mw: null, tenYrImpact: null },
 ];
 
 export const STATES_DATA = [
@@ -112,7 +115,7 @@ export const JOBS_PER_BILLION = [
 
 export const PROJECT_STATUS_BOARD = [
   { name: "Stargate Abilene", operator: "OpenAI/Oracle", state: "TX", mw: 1200, status: "ONLINE", statusColor: "#22c55e", capex: "$3.5B" },
-  { name: "xAI Colossus", operator: "xAI", state: "TN", mw: 300, status: "ONLINE", statusColor: "#22c55e", capex: "N/D" },
+  { name: "xAI Colossus", operator: "xAI", state: "TN", mw: 150, status: "ONLINE", statusColor: "#22c55e", capex: "N/D" },
   { name: "Loudoun Cluster", operator: "Multi-tenant", state: "VA", mw: 4000, status: "ONLINE", statusColor: "#22c55e", capex: "N/D" },
   { name: "Meta Hyperion", operator: "Meta", state: "LA", mw: 5000, status: "BUILDING", statusColor: "#f59e0b", capex: "$27B" },
   { name: "Vantage Lighthouse", operator: "Vantage", state: "WI", mw: 902, status: "BUILDING", statusColor: "#f59e0b", capex: "$15B" },
@@ -130,6 +133,8 @@ export const PROJECT_STATUS_BOARD = [
   { name: "Stargate Wisconsin", operator: "OpenAI/Oracle", state: "WI", mw: null, status: "ANNOUNCED", statusColor: "#475569", capex: "TBD" },
   { name: "Crusoe-Tallgrass WY", operator: "Crusoe", state: "WY", mw: 1800, status: "PLANNED", statusColor: "#94a3b8", capex: "TBD" },
   { name: "Stargate Michigan", operator: "OpenAI/Oracle", state: "MI", mw: 1000, status: "BUILDING", statusColor: "#f59e0b", capex: "$45B+" },
+  { name: "Hut 8 Beacon Point", operator: "Hut 8", state: "TX", mw: null, status: "BUILDING", statusColor: "#f59e0b", capex: "$17B" },
+  { name: "Google-Blackstone TPU JV", operator: "Google / Blackstone", state: "Multi", mw: 500, status: "ANNOUNCED", statusColor: "#475569", capex: "$25B" },
 ];
 
 export const FISCAL_BENEFIT_RATIOS = [
@@ -170,6 +175,7 @@ export const HOST_COUNTIES = [
   { county: "Ozaukee County, WI", anchor: "Vantage Lighthouse", investment: "$15B", perCapitaIncome: "Mid-range", povertyRate: "~10%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
   { county: "Bosque County, TX", anchor: "CyrusOne Campus", investment: "Multi-$B", perCapitaIncome: "Below avg", povertyRate: "~18%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
   { county: "Montgomery County, MO", anchor: "Google Project Spade", investment: "$15B", perCapitaIncome: "Below avg", povertyRate: "~16%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
+  { county: "Nueces County, TX", anchor: "Hut 8 Beacon Point", investment: "$17B", perCapitaIncome: "Below avg", povertyRate: "~19%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
 ];
 
 export const RATEPAYER_STATE_YOY = [
@@ -499,4 +505,11 @@ export const TICKER_ITEMS = [
   "Meta Hyperion Year 1: $875M in local contracts; grants to 9 Richland Parish schools for STEM labs and VR instruction",
   "Bosque County, TX (CyrusOne): DC projected to increase county tax revenue 120% — $70M over 30 years for county of 19,000",
   "Louisiana Delta Community College: new DC Technician program — 1,500 technicians needed; $18–$26/hr starting wage",
+  "Google + Blackstone: $25B TPU Cloud joint venture — 500MW online by 2027; sells TPU compute directly to enterprises",
+  "KKR launches Helix Digital Infrastructure: $10B+ / ex-AWS CEO Adam Selipsky — power, networking + data center assets",
+  "Hut 8 Beacon Point, Nueces Co. TX: $17B / 1,900 construction jobs / 230 permanent — 15-year $9.8B lease signed",
+  "US data centers: 4,011 facilities / 50+ GW total capacity (March 2026) — demand growing to 41 GW in 2026 from 31 GW in 2025",
+  "CoreWeave (CRWV): $99.4B revenue backlog · $2.1B Q1 2026 revenue (+112% YoY) · $30B+ 2026 CapEx",
+  "Stargate Abilene: 4 of 8 buildings operational, ~300MW live — full 1,200MW campus on track",
+  "86 GW new utility-scale power planned for US grid in 2026 — a record driven by data center demand",
 ];

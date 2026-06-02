@@ -160,11 +160,11 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
             {[
               { label: "Identified CapEx", value: "$290B+", color: "#f59e0b" },
-              { label: "Hyperscaler CapEx 2026", value: "$680B", color: "#f59e0b" },
+              { label: "Hyperscaler CapEx 2026", value: "$690B", color: "#f59e0b" },
               { label: "Stargate Total", value: "$500B", color: "#ef4444" },
-              { label: "Operational Facilities", value: "4,000+", color: "#22c55e" },
-              { label: "Construction Jobs", value: "40K+", color: "#06b6d4" },
-              { label: "US Elec. Load by 2030", value: "8–12%", color: "#ef4444" },
+              { label: "US Facilities (Mar 2026)", value: "4,011", color: "#22c55e" },
+              { label: "US Grid Capacity", value: "50+ GW", color: "#06b6d4" },
+              { label: "New Grid Additions 2026", value: "86 GW", color: "#ef4444" },
             ].map((s) => (
               <div key={s.label} className="dc-card p-3 sm:p-4" style={{ borderTop: `2px solid ${s.color}` }}>
                 <div className="mono text-xl sm:text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
@@ -192,7 +192,7 @@ export default function Dashboard() {
           {/* ── Section 1: Capital Deployment ── */}
           <section>
             <SH n="01 · Capital Deployment" title="The Spending Ramp"
-              sub="Hyperscaler AI infrastructure spend has grown nearly 10× in three years. The 2026 pace of $680B exceeds the GDP of Switzerland. The $7T through-2030 projection would make this the largest coordinated private capital deployment in history." />
+              sub="Hyperscaler AI infrastructure spend has grown nearly 10× in three years. The 2026 pace of $690B — Amazon $200B, Google $185B, Meta $135B, Microsoft $120B, Oracle $50B — exceeds the GDP of Switzerland. The $7T through-2030 projection would make this the largest coordinated private capital deployment in history." />
 
             {/* Breaking: Alphabet $80B raise */}
             <div className="lc-card mb-5 overflow-hidden">
@@ -257,7 +257,7 @@ export default function Dashboard() {
                 </div>
                 <div className="mt-3 bg-amber-50 border border-amber-100 rounded-lg p-3 flex items-center justify-between">
                   <span className="text-xs font-bold text-amber-800">Combined 2026 Total</span>
-                  <span className="mono text-xl font-black text-amber-600">$675B</span>
+                  <span className="mono text-xl font-black text-amber-600">$690B</span>
                 </div>
               </div>
             </div>
