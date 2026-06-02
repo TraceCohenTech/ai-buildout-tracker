@@ -1,6 +1,6 @@
 export const HYPERSCALER_CAPEX_2026 = [
   { name: "Amazon / AWS", capex: 200, color: "#f59e0b" },
-  { name: "Alphabet / Google", capex: 180, color: "#ef4444" },
+  { name: "Alphabet / Google", capex: 185, color: "#ef4444" },
   { name: "Meta", capex: 125, color: "#3b82f6" },
   { name: "Microsoft", capex: 120, color: "#22c55e" },
   { name: "Oracle", capex: 50, color: "#8b5cf6" },
@@ -10,7 +10,7 @@ export const CAPEX_RAMP = [
   { year: "2023", spend: 118 },
   { year: "2024", spend: 230 },
   { year: "2025", spend: 350 },
-  { year: "2026E", spend: 675 },
+  { year: "2026E", spend: 680 },
   { year: "2030E", spend: 1200 },
 ];
 
@@ -475,6 +475,8 @@ export const WORKFORCE_PIPELINE = [
 ];
 
 export const TICKER_ITEMS = [
+  "BREAKING: Alphabet raises $80B in equity to fund AI infrastructure — Berkshire Hathaway commits $10B; 2026 CapEx $180–190B",
+  "Google Cloud revenue +63% YoY; $460B backlog nearly doubled QoQ — demand outstripping compute supply",
   "LIVE: Stargate Abilene — 200MW operational, 1,000MW under construction in Abilene, TX",
   "PJM capacity auction: $2.2B → $14.7B (+568% YoY) — residential bills absorbing the shock",
   "Meta Hyperion, LA: $27B / 5GW — largest private investment in Louisiana history",

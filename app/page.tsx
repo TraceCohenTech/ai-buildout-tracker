@@ -160,7 +160,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
             {[
               { label: "Identified CapEx", value: "$290B+", color: "#f59e0b" },
-              { label: "Hyperscaler CapEx 2026", value: "$675B", color: "#f59e0b" },
+              { label: "Hyperscaler CapEx 2026", value: "$680B", color: "#f59e0b" },
               { label: "Stargate Total", value: "$500B", color: "#ef4444" },
               { label: "Operational Facilities", value: "4,000+", color: "#22c55e" },
               { label: "Construction Jobs", value: "40K+", color: "#06b6d4" },
@@ -192,7 +192,33 @@ export default function Dashboard() {
           {/* ── Section 1: Capital Deployment ── */}
           <section>
             <SH n="01 · Capital Deployment" title="The Spending Ramp"
-              sub="Hyperscaler AI infrastructure spend has grown nearly 10× in three years. The 2026 pace of $675B exceeds the GDP of Switzerland. The $7T through-2030 projection would make this the largest coordinated private capital deployment in history." />
+              sub="Hyperscaler AI infrastructure spend has grown nearly 10× in three years. The 2026 pace of $680B exceeds the GDP of Switzerland. The $7T through-2030 projection would make this the largest coordinated private capital deployment in history." />
+
+            {/* Breaking: Alphabet $80B raise */}
+            <div className="lc-card mb-5 overflow-hidden">
+              <div className="flex items-center gap-3 px-5 py-3 border-b border-slate-100" style={{ background: "#fffbeb" }}>
+                <span className="text-xs font-black text-amber-700 bg-amber-200 px-2 py-0.5 rounded tracking-wide uppercase">Breaking · June 1, 2026</span>
+                <span className="text-xs font-bold text-slate-700">Alphabet Announces $80B Equity Capital Raise to Expand AI Infrastructure</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-slate-100">
+                {[
+                  { label: "Equity Raise", val: "$80B", sub: "$30B public offering + $40B ATM program" },
+                  { label: "Berkshire Hathaway", val: "$10B", sub: "Private placement — Buffett backs AI buildout" },
+                  { label: "Google 2026 CapEx", val: "$180–190B", sub: "Up from $91B in 2025 — 2× YoY" },
+                  { label: "Google Cloud Backlog", val: "$460B+", sub: "+63% revenue YoY; backlog nearly doubled QoQ" },
+                ].map((x) => (
+                  <div key={x.label} className="px-5 py-4">
+                    <div className="lc-label mb-1">{x.label}</div>
+                    <div className="mono text-xl font-black text-amber-600">{x.val}</div>
+                    <div className="text-xs text-slate-400 mt-1 leading-snug">{x.sub}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="px-5 py-3 bg-slate-50 border-t border-slate-100">
+                <p className="text-xs text-slate-500 leading-relaxed">Alphabet cited demand for AI solutions &ldquo;currently outstripping available compute supply&rdquo; as the primary rationale. 2027 CapEx expected to increase significantly beyond 2026 levels. Berkshire investment at $351.81/share (Class A) and $348.20/share (Class C).</p>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <div className="lc-card lc-card-amber p-5">
                 <div className="text-xs font-bold text-slate-500 mb-3">Global Hyperscaler CapEx Trajectory ($B)</div>
