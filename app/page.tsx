@@ -95,6 +95,18 @@ function LStat({ label, value, sub, icon: Icon, accent = "amber" }: {
   );
 }
 
+/* ─── Watermark: dark sections (hero, status board) ─── */
+function WM({ dark = false }: { dark?: boolean }) {
+  return (
+    <div
+      className="absolute bottom-2 right-3 select-none pointer-events-none z-10"
+      style={{ fontSize: 9, fontFamily: "ui-monospace, monospace", letterSpacing: "0.05em", color: dark ? "rgba(255,255,255,0.18)" : "rgba(100,116,139,0.4)" }}
+    >
+      @Trace_Cohen
+    </div>
+  );
+}
+
 /* ─── Evidence chip ─── */
 function EvidenceChip({ title, val, sub, color }: { title: string; val: string; sub: string; color: string }) {
   return (
@@ -157,7 +169,8 @@ export default function Dashboard() {
             $500B+ in tracked US data center investment is rewiring rural America — flooding depopulating counties with
             construction crews, overloading the electrical grid, and reshaping local fiscal policy in ways that will last decades.
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+          <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+            <WM dark />
             {[
               { label: "Tracked US CapEx", value: "$500B+", color: "#f59e0b" },
               { label: "Hyperscaler CapEx 2026", value: "$760B", color: "#f59e0b" },
@@ -268,7 +281,8 @@ export default function Dashboard() {
             <SH n="02 · Facility Status" title="Project Status Board"
               sub="Real-time status of major US AI data center projects by construction stage. Green = operational. Amber = under construction. Grey = planned or announced." />
             <div className="rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6" style={{ background: "#111" }}>
+              <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6" style={{ background: "#111" }}>
+                <WM dark />
                 {PROJECT_STATUS_BOARD.map((p, i) => (
                   <div key={i} className="p-3 border-b border-r hover:bg-white/5 transition-colors cursor-default" style={{ borderColor: "#1f1f1f" }}>
                     <div className="flex items-center gap-1.5 mb-1.5">
