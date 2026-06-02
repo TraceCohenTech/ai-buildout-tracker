@@ -16,7 +16,7 @@ export const CAPEX_RAMP = [
 
 export const TOP_PROJECTS = [
   { company: "OpenAI / Oracle / SoftBank", project: "Stargate Program Total", location: "National", state: "Multi", status: "Mixed", capex: "$500B", constructionJobs: "30,000+", permJobs: "TBD", mw: 10000, tenYrImpact: null },
-  { company: "Anthropic / Fluidstack", project: "US AI Infrastructure", location: "NY/TX Initial", state: "Multi", status: "Announced", capex: "$50B", constructionJobs: "2,000+", permJobs: "800+", mw: null, tenYrImpact: null },
+  { company: "Anthropic / Fluidstack", project: "US AI Infrastructure", location: "TX + NY (custom campuses)", state: "Multi", status: "Construction", capex: "$50B", constructionJobs: "2,400", permJobs: "800", mw: null, tenYrImpact: null },
   { company: "Google", project: "Texas Program", location: "Multiple TX Counties", state: "TX", status: "Planned", capex: "$40B", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: null },
   { company: "Meta", project: "Hyperion", location: "Richland Parish, LA", state: "LA", status: "Construction", capex: "$27B", constructionJobs: "5,000", permJobs: "500", mw: 5000, tenYrImpact: null },
   { company: "AWS", project: "Mississippi Program", location: "Canton/Clinton/Vicksburg", state: "MS", status: "Construction", capex: "$25B", constructionJobs: "Thousands", permJobs: "2,000", mw: null, tenYrImpact: null },
@@ -43,6 +43,9 @@ export const TOP_PROJECTS = [
   { company: "NTT", project: "US Expansion Program", location: "Chicago/Dallas/Phoenix", state: "Multi", status: "Mixed", capex: "$10B", constructionJobs: "TBD", permJobs: "TBD", mw: 130, tenYrImpact: null },
   { company: "Microsoft", project: "Project Steamboat", location: "Fulton County, GA", state: "GA", status: "Approved", capex: "$1.84B", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: 2884919877 },
   { company: "OpenAI / Oracle / Related Digital", project: "Stargate Michigan", location: "Saline Township, Washtenaw Co.", state: "MI", status: "Construction", capex: "$45B+", constructionJobs: "2,500 (union)", permJobs: "450+", mw: 1000, tenYrImpact: null },
+  { company: "OpenAI / Oracle / SB Energy", project: "Stargate Milam County", location: "Milam County, TX", state: "TX", status: "Construction", capex: "$1B (phase 1 infra)", constructionJobs: "TBD", permJobs: "TBD", mw: 1200, tenYrImpact: null },
+  { company: "OpenAI / Oracle / BorderPlex / STACK", project: "Stargate Project Jupiter", location: "Doña Ana County (Santa Teresa), NM", state: "NM", status: "Construction", capex: "$50B (5-yr) / $165B (30-yr)", constructionJobs: "2,500", permJobs: "750", mw: null, tenYrImpact: null },
+  { company: "OpenAI / Oracle / SoftBank", project: "Stargate Lordstown", location: "Lordstown (former GM plant), Mahoning Co.", state: "OH", status: "Construction", capex: "$3B (SoftBank)", constructionJobs: "TBD", permJobs: "TBD", mw: 600, tenYrImpact: null },
   { company: "Google", project: "Project Spade", location: "New Florence, Montgomery Co.", state: "MO", status: "Planned", capex: "$15B", constructionJobs: "2,000+", permJobs: "Hundreds", mw: null, tenYrImpact: null },
   { company: "Google / Blackstone", project: "TPU Cloud JV", location: "US (multiple)", state: "Multi", status: "Announced", capex: "$25B (incl. leverage)", constructionJobs: "TBD", permJobs: "TBD", mw: 500, tenYrImpact: null },
   { company: "KKR / Helix Digital", project: "Helix Digital Infrastructure", location: "US (multiple)", state: "Multi", status: "Announced", capex: "$10B+", constructionJobs: "TBD", permJobs: "TBD", mw: null, tenYrImpact: null },
@@ -138,7 +141,9 @@ export const PROJECT_STATUS_BOARD = [
   { name: "Google Texas Program", operator: "Google", state: "TX", mw: null, status: "PLANNED", statusColor: "#94a3b8", capex: "$40B" },
   { name: "AWS Mississippi", operator: "AWS", state: "MS", mw: null, status: "PLANNED", statusColor: "#94a3b8", capex: "$25B" },
   { name: "QTS Dane County", operator: "QTS", state: "WI", mw: 750, status: "PLANNED", statusColor: "#94a3b8", capex: "$12B" },
-  { name: "Stargate Wisconsin", operator: "OpenAI/Oracle", state: "WI", mw: null, status: "ANNOUNCED", statusColor: "#475569", capex: "TBD" },
+  { name: "Stargate Milam County", operator: "OpenAI/Oracle/SB Energy", state: "TX", mw: 1200, status: "BUILDING", statusColor: "#f59e0b", capex: "$1B+" },
+  { name: "Stargate Project Jupiter", operator: "OpenAI/Oracle/STACK", state: "NM", mw: null, status: "BUILDING", statusColor: "#f59e0b", capex: "$50B" },
+  { name: "Stargate Lordstown", operator: "OpenAI/Oracle/SoftBank", state: "OH", mw: 600, status: "BUILDING", statusColor: "#f59e0b", capex: "$3B" },
   { name: "Crusoe-Tallgrass WY", operator: "Crusoe", state: "WY", mw: 1800, status: "PLANNED", statusColor: "#94a3b8", capex: "TBD" },
   { name: "Stargate Michigan", operator: "OpenAI/Oracle", state: "MI", mw: 1000, status: "BUILDING", statusColor: "#f59e0b", capex: "$45B+" },
   { name: "Hut 8 Beacon Point", operator: "Hut 8", state: "TX", mw: null, status: "BUILDING", statusColor: "#f59e0b", capex: "$17B" },
@@ -194,6 +199,9 @@ export const HOST_COUNTIES = [
   { county: "Hill County, TX", anchor: "Nexus Hubbard Campus", investment: "TBD + $50M community fund", perCapitaIncome: "Below avg", povertyRate: "~16%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
   { county: "Pittsylvania County, VA", anchor: "STACK Berry Hill", investment: "$100B (30-yr)", perCapitaIncome: "Below avg", povertyRate: "~17%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
   { county: "Pike County, OH", anchor: "SoftBank PORTS Campus", investment: "$33B+ (Phase 1)", perCapitaIncome: "Below avg", povertyRate: "~22%", childPoverty: "N/A", popChange: "Declining", verdict: "Transformative" },
+  { county: "Doña Ana County, NM", anchor: "Stargate Project Jupiter", investment: "$50B (5-yr) / $165B (30-yr)", perCapitaIncome: "Below avg", povertyRate: "~22%", childPoverty: "N/A", popChange: "Growing", verdict: "Transformative" },
+  { county: "Mahoning County, OH", anchor: "Stargate Lordstown", investment: "$3B (Phase 1)", perCapitaIncome: "Below avg", povertyRate: "~18%", childPoverty: "N/A", popChange: "Declining", verdict: "Positive" },
+  { county: "Milam County, TX", anchor: "Stargate Milam", investment: "$1B+ (phase 1 infra)", perCapitaIncome: "Below avg", povertyRate: "~16%", childPoverty: "N/A", popChange: "Stable", verdict: "Positive" },
 ];
 
 export const RATEPAYER_STATE_YOY = [
@@ -517,7 +525,10 @@ export const TICKER_ITEMS = [
   "AFBF: 4,925 active/under-construction data centers — most converted farmland won't return to ag",
   "Construction workers: $140K avg annual comp, $70/hr — pulling workforce from 300-mile radius",
   "Stargate Michigan: $45B+ / 1GW / 2,500 union construction jobs / 450+ permanent — Saline Township, Washtenaw County",
-  "Stargate Michigan: first union-built Stargate campus — IBEW + operating engineers; delivery end 2027",
+  "Stargate Michigan: first union-built Stargate campus — IBEW + operating engineers; delivery end 2027; groundbreaking June 1 2026",
+  "Stargate Project Jupiter (Doña Ana Co. NM): $50B / 5-yr · $165B / 30-yr — 2,500 construction jobs, 750 permanent at $75K–$100K; $384M annual county economic impact",
+  "Stargate Lordstown, OH: 600MW (→1.5GW) — former GM plant repurposed; SoftBank $3B; on track for 2026 operations",
+  "Stargate Milam County, TX: 1.2GW / SB Energy — $1B phase 1 infra; 595 acres; first facilities entering service 2026",
   "Google Project Spade: $15B / Montgomery County, MO — largest investment in Missouri history; trains 2,300 construction laborers via IBEW",
   "AWS Canton, MS: Amazon Think Big Corners in every elementary school; $12M in workforce investment; 7,000+ students served",
   "Meta Hyperion Year 1: $875M in local contracts; grants to 9 Richland Parish schools for STEM labs and VR instruction",
