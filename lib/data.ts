@@ -55,6 +55,13 @@ export const TOP_PROJECTS = [
   { company: "Creekstone Energy", project: "Delta Gigasite", location: "Millard County (Delta), UT", state: "UT", status: "Construction", capex: "$17B (20-yr)", constructionJobs: "TBD", permJobs: "106+", mw: 9700, tenYrImpact: null },
   { company: "Nscale / Microsoft / NVIDIA", project: "Monarch Compute Campus", location: "Mason County (Point Pleasant), WV", state: "WV", status: "Construction", capex: "TBD", constructionJobs: "TBD", permJobs: "TBD", mw: 8000, tenYrImpact: null },
   { company: "Nexus Data Centers", project: "Hubbard AI Campus", location: "Hill County (Hubbard), TX", state: "TX", status: "Construction", capex: "TBD", constructionJobs: "Thousands", permJobs: "Hundreds", mw: 600, tenYrImpact: null },
+  /* ── Miner → AI Pivots ── */
+  { company: "IREN (ex-Bitcoin miner)", project: "Childress AI Cloud + Horizon 1", location: "Childress County, TX", state: "TX", status: "Construction", capex: "$9.7B (Microsoft 5-yr deal) + $325M Horizon 1", constructionJobs: "TBD", permJobs: "TBD", mw: 250, tenYrImpact: null },
+  { company: "Core Scientific (CORZ, ex-miner)", project: "CoreWeave AI Campus Network", location: "TX / GA / KY / NC / SC (5 sites)", state: "Multi", status: "Construction", capex: "$5B+ infra / $10B+ revenue (12-yr)", constructionJobs: "TBD", permJobs: "TBD", mw: 590, tenYrImpact: null },
+  { company: "Riot Platforms (ex-Bitcoin miner)", project: "Rockdale AI Conversion", location: "Rockdale, Milam Co. + Navarro Co., TX", state: "TX", status: "Construction", capex: "$1.6B+ (Starboard-backed)", constructionJobs: "TBD", permJobs: "TBD", mw: 700, tenYrImpact: null },
+  { company: "TeraWulf (ex-Bitcoin miner)", project: "Lake Mariner HPC + Abernathy TX", location: "Yates Co. NY + Hale Co. TX + Hawesville KY", state: "Multi", status: "Construction", capex: "$900M+ raised", constructionJobs: "TBD", permJobs: "TBD", mw: 168, tenYrImpact: null },
+  { company: "Cipher Digital (ex-Cipher Mining)", project: "Black Pearl Compute Campus", location: "Texas (wind-powered)", state: "TX", status: "Construction", capex: "$2B (Black Pearl notes)", constructionJobs: "TBD", permJobs: "TBD", mw: 300, tenYrImpact: null },
+  { company: "MARA Holdings (ex-Marathon Digital)", project: "Long Ridge AI Campus + Starwood JV", location: "Meigs Co. OH (Long Ridge) + TBD", state: "Multi", status: "Announced", capex: "~$1.5B (Long Ridge acq.)", constructionJobs: "TBD", permJobs: "TBD", mw: 1000, tenYrImpact: null },
 ];
 
 export const STATES_DATA = [
@@ -153,6 +160,13 @@ export const PROJECT_STATUS_BOARD = [
   { name: "Delta Gigasite", operator: "Creekstone Energy", state: "UT", mw: 9700, status: "BUILDING", statusColor: "#f59e0b", capex: "$17B" },
   { name: "Monarch Compute Campus", operator: "Nscale / Microsoft", state: "WV", mw: 8000, status: "BUILDING", statusColor: "#f59e0b", capex: "TBD" },
   { name: "Nexus Hubbard Campus", operator: "Nexus Data Centers", state: "TX", mw: 600, status: "BUILDING", statusColor: "#f59e0b", capex: "TBD" },
+  /* ── Miner → AI Pivots ── */
+  { name: "IREN Childress AI (ex-BTC)", operator: "IREN / Microsoft", state: "TX", mw: 250, status: "BUILDING", statusColor: "#f59e0b", capex: "$9.7B deal" },
+  { name: "Core Scientific AI (ex-BTC)", operator: "CORZ / CoreWeave", state: "Multi", mw: 590, status: "BUILDING", statusColor: "#f59e0b", capex: "$5B+" },
+  { name: "Riot Rockdale AI (ex-BTC)", operator: "Riot Platforms / AMD", state: "TX", mw: 700, status: "BUILDING", statusColor: "#f59e0b", capex: "$1.6B+" },
+  { name: "TeraWulf Lake Mariner HPC", operator: "TeraWulf / Fluidstack", state: "Multi", mw: 168, status: "BUILDING", statusColor: "#f59e0b", capex: "$900M+" },
+  { name: "Cipher Black Pearl (ex-BTC)", operator: "Cipher Digital / AWS", state: "TX", mw: 300, status: "BUILDING", statusColor: "#f59e0b", capex: "$2B" },
+  { name: "MARA Long Ridge AI (ex-BTC)", operator: "MARA / Starwood", state: "Multi", mw: 1000, status: "ANNOUNCED", statusColor: "#475569", capex: "$1.5B+" },
 ];
 
 export const FISCAL_BENEFIT_RATIOS = [
@@ -537,6 +551,11 @@ export const TICKER_ITEMS = [
   "Google + Blackstone: $25B TPU Cloud joint venture — 500MW online by 2027; sells TPU compute directly to enterprises",
   "KKR launches Helix Digital Infrastructure: $10B+ / ex-AWS CEO Adam Selipsky — power, networking + data center assets",
   "Hut 8 Beacon Point, Nueces Co. TX: $17B / 1,900 construction jobs / 230 permanent — 15-year $9.8B lease signed",
+  "MINER → AI PIVOT WAVE: IREN ($9.7B Microsoft deal) · Core Scientific ($10B CoreWeave) · Riot (700MW AMD conversion) · TeraWulf (168MW HPC JV) · Cipher Digital (300MW AWS) · MARA (1GW Starwood JV) — ex-Bitcoin miners becoming AI infrastructure backbone",
+  "IREN Childress TX: $9.7B / 5-yr Microsoft AI cloud deal — 76,000 NVIDIA GB300 GPUs / 200MW; acquired Mirantis $625M; Horizon 1 (50MW) under construction",
+  "Core Scientific (CORZ): 590MW CoreWeave AI campus network across 5 states — $10B+ revenue / 12 years; 350MW energized; 3GW pipeline; $3.3B bond sale April 2026",
+  "Riot Platforms Rockdale TX: converting full 700MW to AI data center tenants — AMD 50MW direct lease; Terrestrial Energy nuclear MOU; 1.7GW total TX portfolio",
+  "Cipher Digital (ex-Cipher Mining): 300MW / 15-yr AWS lease = $5.5B revenue; $2B Black Pearl Compute notes — Texas wind-powered; hyperscale-grade design",
   "Creekstone Delta Gigasite: $17B / 9,700 MW — Millard County, UT; nuclear + solar + gas hybrid; Utah Gov confirmed; construction underway",
   "Nscale Monarch Compute Campus: 8GW / Mason County WV — Microsoft signed 1.35GW LOI; NVIDIA Vera Rubin NVL72 GPUs; nation's first state-certified AI microgrid",
   "Nexus Data Centers Hubbard, TX: $50M community partnership fund for Hill County — construction underway; 600MW Phase 1 / 7.2GW expansion potential",
